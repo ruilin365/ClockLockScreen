@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="_customTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout Class="@(_isDarkMode ? "dark-mode" : "light-mode")">
+    <MudAppBar Class="px-2"
+               Elevation="25"
+               Gutters="false"
+               @onmousedown="MouseDown">
+
+        <div class="d-flex align-end">
+            <MudImage Src="images/icon.png"
+                      Class="rounded-circle"
+                      Style="height:24px; width:24px;"></MudImage>
+            <MudText Typo="Typo.body2" Color="Color.Primary" Class="ml-1">@(Lang["Title"])</MudText>
+        </div>
+
+        <MudSpacer />
+
+        <div class="d-flex align-end"
+             @onmouseup:stopPropagation="true"
+             @onmousedown:stopPropagation="true">
+            <TitleBar />
+        </div>
+    </MudAppBar>
+
+    <MudDrawer Elevation="2" Open="true" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Persistent">
+        <MudNavMenu>
+            <MudNavLink Href="/lock-settings" Icon="@Icons.Material.Filled.Lock">@(Lang["LockOptions"])</MudNavLink>
+            <MudNavLink Href="/unlock-settings" Icon="@Icons.Material.Filled.VpnKey">@(Lang["UnlockOptions"])</MudNavLink>
+            <MudNavLink Href="/general-settings" Icon="@Icons.Material.Filled.Settings">@(Lang["GeneralSettings"])</MudNavLink>
+            <MudNavLink Href="/about" Icon="@Icons.Material.Filled.Info">@(Lang["About"])</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+
+    <MudMainContent Style="height: 100vh;">
+        <MudPaper Class="py-4 px-3 overflow-auto"
+                  Style="height: 100%; background: transparent; border: none; box-shadow: none;">
+            @Body
+        </MudPaper>
+    </MudMainContent>
+</MudLayout>

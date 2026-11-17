@@ -1,0 +1,31 @@
+﻿@* 通用设置滑块：拖动时数值实时变化，点数字可以直接输入（最多两位小数） *@
+
+<MudText Typo="Typo.subtitle2" Class="input-title">@Label</MudText>
+<div class="setting-slider">
+    <MudSlider T="double"
+               Value="@Value"
+               ValueChanged="OnSliderChanged"
+               Min="@Min"
+               Max="@Max"
+               Step="@Step"
+               Immediate="true"
+               Color="Color.Primary"
+               Class="flex-grow-1" />
+    <div class="setting-slider-value">
+        <input type="number"
+               class="num-input"
+               value="@Display"
+               min="@Min"
+               max="@Max"
+               step="0.01"
+               @onchange="OnInputChanged" />
+        @if (!string.IsNullOrEmpty(Suffix))
+        {
+            <span class="num-suffix">@Suffix</span>
+        }
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(Remark))
+{
+    <MudText Typo="Typo.caption" Class="input-tip">@Remark</MudText>
+}

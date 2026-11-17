@@ -1,0 +1,55 @@
+﻿@page "/about"
+
+<div class="d-flex flex-column align-center mb-4">
+    <MudAvatar Size="Size.Large" Class="mb-3">
+        <MudImage Src="images/icon.png" Alt="Program Icon" Width="64" Height="64" Class="rounded-circle" />
+    </MudAvatar>
+
+    <MudText Typo="Typo.h5" Class="mb-1" Color="Color.Primary" Style="font-weight:600;">@Lang["Title"]</MudText>
+    <MudText Typo="Typo.caption" Class="mb-3" Style="opacity:0.6;">@($"{Lang["Version"]} {_version}")</MudText>
+    <MudText Typo="Typo.subtitle1" Align="Align.Center" Style="opacity:0.85;">@Lang["AboutSlogan"]</MudText>
+</div>
+
+<MudPaper Class="pa-4 mb-4" Elevation="5">
+    <MudText Typo="Typo.body2" Style="line-height:1.9;">@Lang["AboutIntro"]</MudText>
+
+    <MudDivider Class="my-3" />
+
+    <MudStack Spacing="2">
+        <div class="d-flex" style="gap:8px;">
+            <MudIcon Icon="@Icons.Material.Filled.PauseCircleOutline" Size="Size.Small" Color="Color.Primary" />
+            <MudText Typo="Typo.body2" Style="line-height:1.7;">@Lang["AboutFeature1"]</MudText>
+        </div>
+        <div class="d-flex" style="gap:8px;">
+            <MudIcon Icon="@Icons.Material.Filled.Layers" Size="Size.Small" Color="Color.Primary" />
+            <MudText Typo="Typo.body2" Style="line-height:1.7;">@Lang["AboutFeature2"]</MudText>
+        </div>
+        <div class="d-flex" style="gap:8px;">
+            <MudIcon Icon="@Icons.Material.Filled.Opacity" Size="Size.Small" Color="Color.Primary" />
+            <MudText Typo="Typo.body2" Style="line-height:1.7;">@Lang["AboutFeature3"]</MudText>
+        </div>
+    </MudStack>
+</MudPaper>
+
+<MudPaper Class="pa-4 mb-4" Elevation="5">
+    <div class="d-flex" style="gap:6px;">
+        <MudText Typo="Typo.body2" Style="opacity:0.6;">@Lang["AboutAuthor"]</MudText>
+        <MudText Typo="Typo.body2">ruilin365</MudText>
+    </div>
+
+    <MudText Typo="Typo.body2" Class="mt-2" Style="opacity:0.8;">@(Lang["AboutBasedOn"])</MudText>
+
+    <MudDivider Class="my-3" />
+
+    <MudText Typo="Typo.caption" Style="opacity:0.6;">@(Lang["AboutCopyright"])</MudText>
+    <MudText Typo="Typo.caption" Class="mt-1" Style="opacity:0.6;">@(Lang["AboutLicenseNote"])</MudText>
+
+    <MudButton Variant="Variant.Outlined"
+               Size="Size.Small"
+               Color="Color.Primary"
+               Class="mt-4"
+               StartIcon="@Icons.Material.Filled.Description"
+               OnClick="OpenLicense">
+        @(Lang["ViewLicense"])
+    </MudButton>
+</MudPaper>

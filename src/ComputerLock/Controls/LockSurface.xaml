@@ -1,0 +1,43 @@
+<UserControl x:Class="ComputerLock.Controls.LockSurface"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:ComputerLock.Controls"
+             IsHitTestVisible="False"
+             Focusable="False">
+
+    <Grid>
+        <!-- 黑色遮罩层：铺满整屏，透明度可调 -->
+        <Border x:Name="MaskLayer"
+                Background="#000000"
+                Opacity="0"
+                Visibility="Collapsed"
+                IsHitTestVisible="False" />
+
+        <!--
+            时钟层：全屏背景 + 翻页时钟整体算一层。
+            「时钟不透明度」作用在这一层上，所以调低时连背景一起透出桌面，
+            而不是只让数字变淡、背景照样遮死屏幕。
+        -->
+        <Grid x:Name="ClockLayer"
+              Visibility="Collapsed"
+              IsHitTestVisible="False">
+
+            <!-- 时钟模式的全屏背景：底色 + 多个柔和径向色块叠加，类似网格渐变 -->
+            <Grid x:Name="ClockBackground"
+                  Visibility="Collapsed"
+                  ClipToBounds="True"
+                  IsHitTestVisible="False">
+                <Canvas x:Name="MeshCanvas" />
+            </Grid>
+
+            <!-- 翻页时钟 -->
+            <Viewbox x:Name="ClockHost"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Visibility="Collapsed"
+                     IsHitTestVisible="False">
+                <controls:FlipClock x:Name="LockClock" />
+            </Viewbox>
+        </Grid>
+    </Grid>
+</UserControl>

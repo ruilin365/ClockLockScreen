@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="ComputerLock.Controls.FlipClock"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:ComputerLock.Controls"
+             Width="836" Height="280"
+             IsHitTestVisible="False"
+             Focusable="False">
+
+    <StackPanel Orientation="Horizontal">
+        <controls:FlipCard x:Name="CardHourTens" />
+        <controls:FlipCard x:Name="CardHourOnes" Margin="12,0,0,0" />
+        <controls:FlipCard x:Name="CardMinuteTens" Margin="28,0,0,0" />
+        <controls:FlipCard x:Name="CardMinuteOnes" Margin="12,0,0,0" />
+        <controls:FlipCard x:Name="CardSecondTens" Margin="28,0,0,0" Visibility="Collapsed" />
+        <controls:FlipCard x:Name="CardSecondOnes" Margin="12,0,0,0" Visibility="Collapsed" />
+    </StackPanel>
+</UserControl>

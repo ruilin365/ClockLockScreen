@@ -1,0 +1,118 @@
+﻿@page "/unlock-settings"
+
+@{
+    var passwordCardClass = "pa-4 unlock-card" + (AppSettings.ScreenUnlockMethod == ScreenUnlockMethods.Password ? " selected" : "");
+    var hotkeyCardClass = "pa-4 mb-4 unlock-card" + (AppSettings.ScreenUnlockMethod == ScreenUnlockMethods.Hotkey ? " selected" : "");
+    bool isPasswordSelected = AppSettings.ScreenUnlockMethod == ScreenUnlockMethods.Password;
+    bool isHotkeySelected = AppSettings.ScreenUnlockMethod == ScreenUnlockMethods.Hotkey;
+}
+
+<MudText Typo="Typo.h6" Class="mb-4">@(Lang["UnlockOptions"])</MudText>
+
+<div class="unlock-card-wrapper@(isHotkeySelected ? " selected" : "")" @onclick="@(() => SelectUnlockMethod(ScreenUnlockMethods.Hotkey))" style="position:relative;">
+    <MudPaper Class="@hotkeyCardClass" Elevation="5">
+        <div class="card-header">
+            <span class="card-title">@($"{Lang["HotkeyUnlock"]} ⚡")</span>
+            <MudIcon Icon="@(isHotkeySelected? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.RadioButtonUnchecked)"
+                     Color="@(isHotkeySelected ? Color.Secondary : Color.Default)" />
+        </div>
+        <div class="card-content">
+            <WinSwitch Value="@(AppSettings.IsUnlockUseLockHotkey)"
+           ValueChanged="@((bool v) => { AppSettings.IsUnlockUseLockHotkey = v; SaveSettings(); })"
+           Label="@(Lang["UseLockHotkey"])"
+           Disabled="@(!isHotkeySelected)"
+           />
+
+            <MudText Typo="Typo.subtitle2" Class="input-title" Style="@( !AppSettings.IsUnlockUseLockHotkey && isHotkeySelected ? "" : "opacity:0.5;")">@(Lang["UnlockHotkey"])</MudText>
+            <HotkeyInput Title=""
+                         Hotkey="@(AppSettings.UnlockHotkeyString)"
+                         Disabled="@(AppSettings.IsUnlockUseLockHotkey || !isHotkeySelected)"
+                         OnHotkeySet="SetUnlockHotkey"
+                         OnHotkeyClear="ClearUnlockHotkey" />
+            @if (!isHotkeySelected)
+            {
+                <div class="card-mask"></div>
+            }
+        </div>
+    </MudPaper>
+</div>
+
+<div class="unlock-card-wrapper@(isPasswordSelected ? " selected" : "")" @onclick="@(() => SelectUnlockMethod(ScreenUnlockMethods.Password))" style="position:relative;">
+    <MudPaper Class="@passwordCardClass" Elevation="5">
+        <div class="card-header">
+            <span class="card-title">@($"{Lang["PasswordUnlock"]} 🧩")</span>
+            <MudIcon Icon="@(isPasswordSelected? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.RadioButtonUnchecked)"
+                     Color="@(isPasswordSelected ? Color.Secondary : Color.Default)" />
+        </div>
+        <div class="card-content">
+
+            <MudText Typo="Typo.body2" Color="Color.Secondary" Class="mb-4">
+                @if (AppSettings.EnablePasswordBox)
+                {
+                    @(Lang["DisablePasswordBoxTips"])
+                }
+                else
+                {
+                    @(Lang["EnablePasswordBoxTips"])
+                }
+            </MudText>
+
+            <MudButton Color="Color.Secondary"
+                       Variant="Variant.Outlined"
+                       Class="mb-2"
+                       StartIcon="@Icons.Material.Filled.Password"
+                       OnClick="PasswordEdit"
+                       Size="Size.Small"
+                       Disabled="@(!isPasswordSelected)">
+                @(Lang["SetPassword"])
+            </MudButton>
+            <WinSwitch Value="@(AppSettings.EnablePasswordBox)"
+           ValueChanged="@((bool v) => { AppSettings.EnablePasswordBox = v; SaveSettings(); })"
+           Label="@(Lang["EnablePasswordBox"])"
+           Disabled="@(!isPasswordSelected)"
+           />
+
+            <MudStack Class="ml-4 mt-4" Spacing="4">
+                <div>
+                    <MudText Typo="Typo.subtitle2" Class="input-title">@(Lang["PwdLocation"])</MudText>
+                    <MudSelect T="ScreenLocationEnum"
+                               Label=""
+                               Variant="Variant.Outlined"
+                               Value="@(AppSettings.PasswordInputLocation)"
+                               Disabled="@(!AppSettings.EnablePasswordBox || !isPasswordSelected)"
+                               ValueChanged="PwdBoxLocationChanged"
+                               Margin="Margin.Dense"
+                               FullWidth="false"
+                               class="max-width-fix"
+                               Dense="true">
+                        <MudSelectItem Value="@(ScreenLocationEnum.Center)">@(Lang["Center"])</MudSelectItem>
+                        <MudSelectItem Value="@(ScreenLocationEnum.TopLeft)">@(Lang["TopLeft"])</MudSelectItem>
+                        <MudSelectItem Value="@(ScreenLocationEnum.TopRight)">@(Lang["TopRight"])</MudSelectItem>
+                        <MudSelectItem Value="@(ScreenLocationEnum.BottomLeft)">@(Lang["BottomLeft"])</MudSelectItem>
+                        <MudSelectItem Value="@(ScreenLocationEnum.BottomRight)">@(Lang["BottomRight"])</MudSelectItem>
+                    </MudSelect>
+                </div>
+                <WinSwitch Value="@(_keyboardDownChecked)"
+           ValueChanged="@((bool v) => { _keyboardDownChecked = v; KeyboardDownChecked(); })"
+           Label="@(Lang["KeyboardDownActivePwd"])"
+           Disabled="@(!AppSettings.EnablePasswordBox || !isPasswordSelected)"
+           />
+                <WinSwitch Value="@(_mouseDownChecked)"
+           ValueChanged="@((bool v) => { _mouseDownChecked = v; MouseDownChecked(); })"
+           Label="@(Lang["MouseDownActivePwd"])"
+           Disabled="@(!AppSettings.EnablePasswordBox || !isPasswordSelected)"
+           />
+                <WinSwitch Value="@(AppSettings.IsHidePasswordWindow)"
+           ValueChanged="@((bool v) => { AppSettings.IsHidePasswordWindow = v; SaveSettings(); })"
+           Label="@(Lang["HidePasswordWindow"])"
+           Disabled="@(!AppSettings.EnablePasswordBox || !isPasswordSelected)"
+           />
+
+            </MudStack>
+            @if (!isPasswordSelected)
+            {
+                <div class="card-mask"></div>
+            }
+        </div>
+    </MudPaper>
+</div>

@@ -1,0 +1,96 @@
+﻿<UserControl x:Class="ComputerLock.Controls.FlipCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Width="200" Height="280"
+             IsHitTestVisible="False"
+             Focusable="False"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <!--
+            牌面数字样式：字体为 FlipIt 同款窄体。
+            数字用 Canvas 绝对定位，垂直位置在代码里按字形包围盒精确计算，
+            保证上半与下半严格拼合。
+        -->
+        <Style x:Key="DigitText" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI" />
+            <Setter Property="FontSize" Value="250" />
+            <Setter Property="Foreground" Value="#EAEAEA" />
+            <Setter Property="Width" Value="200" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Width="200" Height="280" ClipToBounds="True">
+
+        <!-- 牌面底板：半透明，底下的渐变能透出来，不会黑得突兀 -->
+        <Border x:Name="FaceFill" CornerRadius="14" Background="#A6141418" />
+        <Border x:Name="FaceBorder" CornerRadius="14" BorderBrush="#3DFFFFFF" BorderThickness="1" />
+
+        <!--
+            上半（静态层）：显示新数字。
+            翻落过程中会被裁剪成「翻页面以上」的一条，只露出已经翻过去的部分，
+            这样它和翻页层里的旧数字永远不会重叠。
+        -->
+        <Canvas x:Name="TopPanel" Width="200" Height="140"
+                VerticalAlignment="Top" ClipToBounds="True">
+            <TextBlock x:Name="TopText" Text="0" Style="{StaticResource DigitText}" />
+        </Canvas>
+
+        <!-- 下半（静态层）：显示旧数字，翻起过程中被裁剪成「翻页面以下」的一条 -->
+        <Canvas x:Name="BottomPanel" Width="200" Height="140"
+                VerticalAlignment="Bottom" ClipToBounds="True">
+            <TextBlock x:Name="BottomText" Text="0" Style="{StaticResource DigitText}" />
+        </Canvas>
+
+        <!-- 中缝 -->
+        <Rectangle x:Name="SeamLine" Width="200" Height="2" Fill="#000000" VerticalAlignment="Center" Opacity="0.55" />
+
+        <!--
+            上翻页层：铰链在底边，显示旧数字的上半，向下翻落（1→0 压扁）。
+            不给底板加填充 —— 它下面没有任何别的数字，不需要遮挡，
+            保持和牌面一致的半透明观感。
+        -->
+        <Canvas x:Name="FlipPanel" Width="200" Height="140"
+                VerticalAlignment="Top" ClipToBounds="True"
+                Visibility="Collapsed">
+            <Canvas.RenderTransformOrigin>0.5,1</Canvas.RenderTransformOrigin>
+            <Canvas.RenderTransform>
+                <ScaleTransform x:Name="FlipScale" ScaleY="1" ScaleX="1" />
+            </Canvas.RenderTransform>
+            <TextBlock x:Name="FlipText" Text="0" Style="{StaticResource DigitText}" />
+            <Rectangle x:Name="FlipShade" Width="200" Height="140" Opacity="0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#00000000" Offset="0" />
+                        <GradientStop Color="#73000000" Offset="0.7" />
+                        <GradientStop Color="#99000000" Offset="1" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Canvas>
+
+        <!--
+            下翻页层：铰链在顶边，显示新数字的下半，从压扁状态翻起盖住下半（0→1 展开）。
+        -->
+        <Canvas x:Name="FlipPanelBottom" Width="200" Height="140"
+                VerticalAlignment="Bottom" ClipToBounds="True"
+                Visibility="Collapsed">
+            <Canvas.RenderTransformOrigin>0.5,0</Canvas.RenderTransformOrigin>
+            <Canvas.RenderTransform>
+                <ScaleTransform x:Name="FlipScaleBottom" ScaleY="0" ScaleX="1" />
+            </Canvas.RenderTransform>
+            <TextBlock x:Name="FlipBottomText" Text="0" Style="{StaticResource DigitText}" />
+            <Rectangle x:Name="FlipShadeBottom" Width="200" Height="140" Opacity="0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#99000000" Offset="0" />
+                        <GradientStop Color="#5C000000" Offset="0.35" />
+                        <GradientStop Color="#00000000" Offset="1" />
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Canvas>
+
+    </Grid>
+</UserControl>

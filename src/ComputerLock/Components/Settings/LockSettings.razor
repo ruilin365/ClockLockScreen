@@ -1,0 +1,445 @@
+﻿@page "/lock-settings"
+
+<MudText Typo="Typo.h6" Class="mb-4">@(Lang["LockOptions"])</MudText>
+
+<!-- 锁定行为 -->
+<MudPaper Class="pa-4 mb-4" Elevation="5">
+    <MudText Class="group-title">@(Lang["Lock_Group_Behavior"])</MudText>
+    <MudStack Spacing="4">
+        <WinSwitch Value="@(AppSettings.LockOnStartup)"
+           ValueChanged="@((bool v) => { AppSettings.LockOnStartup = v; SaveSettings(); })"
+           Label="@(Lang["LockOnStartup"])"
+           />
+
+        <div>
+            <MudText Typo="Typo.subtitle2" Class="input-title">@($"{Lang["AutoLock"]}{Lang["MinSetTip"]}")</MudText>
+            <MudNumericField T="int"
+                             Label=""
+                             Value="@(AppSettings.AutoLockMinute)"
+                             Min="0"
+                             Variant="Variant.Outlined"
+                             Margin="Margin.Dense"
+                             Class="max-width-fix"
+                             Style="width:120px;"
+                             Adornment="Adornment.End"
+                             AdornmentText="@(Lang["Min"])"
+                             ValueChanged="AutoLockChanged" />
+        </div>
+
+        <HotkeyInput Title="@(Lang["LockHotkey"])"
+                     Hotkey="@(AppSettings.LockHotkeyString)"
+                     OnHotkeySet="SetLockHotkey"
+                     OnHotkeyClear="ClearLockHotkey" />
+    </MudStack>
+</MudPaper>
+
+<!-- Windows 集成 -->
+<MudPaper Class="pa-4 mb-4" Elevation="5">
+    <MudText Class="group-title">@(Lang["Lock_Group_WindowsIntegration"])</MudText>
+    <MudStack Spacing="4">
+        <div>
+            <WinSwitch Value="@(AppSettings.IsDisableWindowsLock)"
+           ValueChanged="@((bool v) => { AppSettings.IsDisableWindowsLock = v; SaveSettings(); })"
+           Label="@(Lang["DisableWindowsLock"])"
+           />
+            <MudText Typo="Typo.caption" Class="input-tip ml-7">
+                @(Lang["DisableWindowsRemark"])
+            </MudText>
+        </div>
+
+        <div class="d-flex align-center">
+            <WinSwitch Value="@(AppSettings.IsUnlockWhenWindowsLock)"
+           ValueChanged="@((bool v) => { AppSettings.IsUnlockWhenWindowsLock = v; SaveSettings(); })"
+           Label="@(Lang["IdleWhenWindowsLock"])"
+           />
+            <MudChip T="string"
+                     Size="Size.Small"
+                     Variant="Variant.Outlined"
+                     Label="true"
+                     Color="Color.Secondary"
+                     Class="ml-2">@(Lang["SuggestedToEnable"])</MudChip>
+        </div>
+
+        <div>
+            <MudText Typo="Typo.subtitle2" Class="input-title">@($"{Lang["AutoPower"]}{Lang["MinSetTip"]}")</MudText>
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                <MudNumericField T="int"
+                                 Label=""
+                                 Value="@(AppSettings.AutoPowerMinute)"
+                                 Min="0"
+                                 Variant="Variant.Outlined"
+                                 Margin="Margin.Dense"
+                                 Class="max-width-fix"
+                                 Style="width:120px;"
+                                 Adornment="Adornment.End"
+                                 AdornmentText="@(Lang["MinAfter"])"
+                                 ValueChanged="AutoPowerChanged" />
+
+                <MudChipSet T="PowerActionType"
+                            CheckMark
+                            Size="Size.Small"
+                            Disabled="@(AppSettings.AutoPowerSecond==0)"
+                            SelectedValue="AppSettings.AutoPowerActionType"
+                            SelectedValueChanged="PowerActionTypeChanged"
+                            SelectionMode="SelectionMode.SingleSelection">
+                    <MudChip Value="@PowerActionType.Shutdown" SelectedColor="Color.Secondary" Variant="Variant.Outlined">@(Lang["Shutdown"])</MudChip>
+                    <MudChip Value="@PowerActionType.Hibernate" SelectedColor="Color.Secondary" Variant="Variant.Outlined">@(Lang["Hibernate"])</MudChip>
+                </MudChipSet>
+            </MudStack>
+        </div>
+    </MudStack>
+</MudPaper>
+
+<!-- 显示与交互 -->
+<MudPaper Class="pa-4 mb-4" Elevation="5">
+    <MudText Class="group-title">@(Lang["Lock_Group_Display"])</MudText>
+    <MudStack Spacing="4">
+        <div class="d-flex align-center" style="gap:10px;">
+            <WinSwitch Value="@AppSettings.IsHideMouseCursor"
+                       ValueChanged="@((bool v) => { AppSettings.IsHideMouseCursor = v; SaveSettings(); })" />
+            <MudText Typo="Typo.body2">@(Lang["HideMouseCursor"])</MudText>
+        </div>
+
+        <div>
+            <MudText Typo="Typo.subtitle2" Class="input-title">@(Lang["LockStyle"])</MudText>
+            <MudSelect T="LockScreenStyle"
+                       Dense="true"
+                       Label=""
+                       Variant="Variant.Outlined"
+                       Value="@(AppSettings.LockStyle)"
+                       ValueChanged="LockStyleChanged"
+                       Class="max-width-fix"
+                       Margin="Margin.Dense">
+                <MudSelectItem Value="@(LockScreenStyle.Transparent)">@($"🪟 {Lang["LockStyleTransparent"]}")</MudSelectItem>
+                <MudSelectItem Value="@(LockScreenStyle.BlackMask)">@($"⬛ {Lang["LockStyleBlackMask"]}")</MudSelectItem>
+                <MudSelectItem Value="@(LockScreenStyle.Clock)">@($"🕐 {Lang["LockStyleClock"]}")</MudSelectItem>
+            </MudSelect>
+
+            <div class="mt-3">
+                <WinSwitch Value="@_isPreviewing"
+                           ValueChanged="@((bool v) => TogglePreview(v))"
+                           Label="@(Lang["PreviewLock"])" />
+                <MudText Typo="Typo.caption" Class="input-tip mt-1">@(Lang["PreviewLockRemark"])</MudText>
+            </div>
+        </div>
+
+        @if (AppSettings.LockStyle == LockScreenStyle.BlackMask)
+        {
+            <div class="ml-7" style="max-width:340px;">
+            <SettingSlider Label="@(Lang["MaskOpacity"])"
+              @bind-Value="AppSettings.LockMaskOpacity"
+              @bind-Value:after="SaveSettingsLive"
+              Min="0" Max="100" Step="1" Suffix="%" />
+            </div>
+        }
+
+        @if (AppSettings.LockStyle == LockScreenStyle.Clock)
+        {
+            <div class="ml-7" style="max-width:380px;">
+
+                <!-- 尺寸与位置 -->
+                <MudText Typo="Typo.overline" Class="input-title mt-2">@(Lang["ClockGroupLayout"])</MudText>
+
+                <SettingSlider Label="@(Lang["ClockOpacity"])"
+                  @bind-Value="AppSettings.ClockOpacity"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="0" Max="100" Step="1" Suffix="%" />
+
+                <SettingSlider Label="@(Lang["ClockBackgroundOpacity"])"
+                  @bind-Value="AppSettings.ClockBackgroundOpacity"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="0" Max="100" Step="1" Suffix="%" />
+
+                <SettingSlider Label="@(Lang["ClockScale"])"
+                  @bind-Value="AppSettings.ClockScale"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="50" Max="150" Step="1" Suffix="%" />
+
+                <SettingSlider Label="@(Lang["ClockOffsetY"])"
+                  @bind-Value="AppSettings.ClockOffsetY"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="-40" Max="40" Step="1" Suffix="%" />
+
+                <!-- 外观 -->
+                <MudText Typo="Typo.overline" Class="input-title mt-4">@(Lang["ClockGroupLook"])</MudText>
+
+                <MudText Typo="Typo.subtitle2" Class="input-title">@(Lang["ClockFont"])</MudText>
+                <MudSelect T="string"
+                           Dense="true"
+                           Label=""
+                           Variant="Variant.Outlined"
+                           Value="@(AppSettings.ClockFontId)"
+                           ValueChanged="ClockFontChanged"
+                           Class="max-width-fix"
+                           Margin="Margin.Dense">
+                    @foreach (var font in ClockFonts.Embedded)
+                    {
+                        <MudSelectItem Value="@(font.Id)">@(font.DisplayName)</MudSelectItem>
+                    }
+                    @if (HasCustomFont)
+                    {
+                        <MudSelectItem Value="@(ClockFonts.CustomId)">@($"{Lang["ClockFontCustom"]} · {CustomFontCaption}")</MudSelectItem>
+                    }
+                </MudSelect>
+
+                <div class="d-flex align-center mt-2" style="gap:8px;">
+                    <MudButton Variant="Variant.Outlined"
+                               Size="Size.Small"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.FileOpen"
+                               OnClick="ImportFont">
+                        @(Lang["ClockFontImport"])
+                    </MudButton>
+                    <MudText Typo="Typo.caption" Style="opacity:0.6;">.ttf / .otf</MudText>
+                </div>
+
+                <SettingSlider Label="@(Lang["ClockFlipSpeed"])"
+                  @bind-Value="AppSettings.ClockFlipSpeed"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="50" Max="200" Step="1" Suffix="%" />
+
+                <SettingSlider Label="@(Lang["AnimationFrameRate"])"
+                  @bind-Value="AppSettings.AnimationFrameRate"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="10" Max="240" Step="1" Suffix="fps" />
+                <MudText Typo="Typo.caption" Class="input-tip">@(Lang["AnimationFrameRateRemark"])</MudText>
+
+                <SettingSlider Label="@(Lang["ClockCardRadius"])"
+                  @bind-Value="AppSettings.ClockCardRadius"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="0" Max="60" Step="1" Suffix="px" />
+
+                <SettingSlider Label="@(Lang["ClockCardShade"])"
+                  @bind-Value="AppSettings.ClockCardShade"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="0" Max="100" Step="1" Suffix="%" />
+
+                <div class="mt-2">
+                    <WinSwitch Value="@AppSettings.ClockShowSeconds"
+                               ValueChanged="@((bool v) => { AppSettings.ClockShowSeconds = v; SaveSettings(); })"
+                               Label="@(Lang["ClockShowSeconds"])" />
+                </div>
+                <div class="mt-1">
+                    <WinSwitch Value="@AppSettings.ClockCardBorder"
+                               ValueChanged="@((bool v) => { AppSettings.ClockCardBorder = v; SaveSettings(); })"
+                               Label="@(Lang["ClockCardBorder"])" />
+                </div>
+                <div class="mt-1">
+                    <WinSwitch Value="@AppSettings.ClockSeamLine"
+                               ValueChanged="@((bool v) => { AppSettings.ClockSeamLine = v; SaveSettings(); })"
+                               Label="@(Lang["ClockSeamLine"])" />
+                </div>
+
+                <MudText Typo="Typo.subtitle2" Class="input-title mt-3">@(Lang["ClockBackground"])</MudText>
+                <MudSelect T="ClockBackgroundMode"
+                           Dense="true"
+                           Label=""
+                           Variant="Variant.Outlined"
+                           Value="@(AppSettings.ClockBackgroundMode)"
+                           ValueChanged="ClockBackgroundModeChanged"
+                           Class="max-width-fix"
+                           Margin="Margin.Dense">
+                    <MudSelectItem Value="@(ClockBackgroundMode.None)">@(Lang["ClockBgNone"])</MudSelectItem>
+                    <MudSelectItem Value="@(ClockBackgroundMode.Solid)">@(Lang["ClockBgSolid"])</MudSelectItem>
+                    <MudSelectItem Value="@(ClockBackgroundMode.Gradient)">@(Lang["ClockBgGradient"])</MudSelectItem>
+                </MudSelect>
+
+                @if (AppSettings.ClockBackgroundMode != ClockBackgroundMode.None)
+                {
+                    <div class="mt-3">
+                        <MudText Typo="Typo.caption" Class="mb-2">@(Lang["PresetColors"])</MudText>
+                        <div class="preset-grid">
+                            @foreach (var preset in ColorPresets.Background)
+                            {
+                                <div class="preset-item @(AppSettings.ClockBackgroundPreset == preset.Id ? "preset-active" : "")"
+                                     @onclick="() => ApplyClockPreset(preset)">
+                                    <div class="preset-swatch @(preset.PeriodSeconds > 0 ? "preset-flow" : "")"
+                                         style="@($"--pg: {preset.CssGradient};")"></div>
+                                    <span class="preset-name">@preset.DisplayName</span>
+                                </div>
+                            }
+                        </div>
+
+                        <MudText Typo="Typo.caption" Class="mb-2 mt-4">@(Lang["CustomColors"])</MudText>
+                        <div class="d-flex align-center flex-wrap" style="gap:14px;">
+                            <input type="color"
+                                   class="color-input"
+                                   value="@AppSettings.ClockBackgroundColor1"
+                                   @onchange="ClockColor1Changed" />
+                            @if (AppSettings.ClockBackgroundMode == ClockBackgroundMode.Gradient)
+                            {
+                                <input type="color"
+                                       class="color-input"
+                                       value="@AppSettings.ClockBackgroundColor2"
+                                       @onchange="ClockColor2Changed" />
+                                <MudIconButton Icon="@Icons.Material.Filled.SwapHoriz"
+                                               Size="Size.Small"
+                                               Variant="Variant.Outlined"
+                                               Color="Color.Primary"
+                                               OnClick="SwapClockColors" />
+                            }
+                        </div>
+                    </div>
+
+                    @if (AppSettings.ClockBackgroundMode == ClockBackgroundMode.Gradient)
+                    {
+                        <div class="cost-warning mt-3">
+                            <MudIcon Icon="@Icons.Material.Filled.Memory" Size="Size.Small" Class="cost-warning-icon" />
+                            <span>@(Lang["GradientCostWarning"])</span>
+                        </div>
+
+                        <div class="d-flex align-center mt-3" style="gap:10px;">
+                            <WinSwitch Value="@AppSettings.ClockBackgroundAnimated"
+                                       ValueChanged="@((bool v) => { AppSettings.ClockBackgroundAnimated = v; SaveSettings(); })" />
+                            <MudText Typo="Typo.body2">@(Lang["AnimatedGradient"])</MudText>
+                        </div>
+                        <MudText Typo="Typo.caption" Class="input-tip">
+                            @(Lang["AnimatedGradientRemark"])
+                        </MudText>
+                        @if (AppSettings.ClockBackgroundAnimated)
+                        {
+                            <div class="cost-warning mt-2">
+                                <MudIcon Icon="@Icons.Material.Filled.Speed" Size="Size.Small" Class="cost-warning-icon" />
+                                <span>@(Lang["GradientFlowCostWarning"])</span>
+                            </div>
+                        }
+
+                        @if (AppSettings.ClockBackgroundAnimated)
+                        {
+                            <div class="mt-2">
+                        <SettingSlider Label="@(Lang["GradientSpeed"])"
+                          @bind-Value="AppSettings.ClockBackgroundSpeed"
+                          @bind-Value:after="SaveSettingsLive"
+                          Min="25" Max="300" Step="1" Suffix="%" />
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mt-3">
+                        <SettingSlider Label="@(Lang["ClockGradientAngle"])"
+                          @bind-Value="AppSettings.ClockBackgroundAngle"
+                          @bind-Value:after="SaveSettingsLive"
+                          Min="0" Max="360" Step="1" Suffix="°" />
+                            </div>
+                        }
+                    }
+                }
+
+            </div>
+        }
+
+        <WinSwitch Value="@(AppSettings.LockAnimation)"
+           ValueChanged="@((bool v) => { AppSettings.LockAnimation = v; SaveSettings(); })"
+           Label="@(Lang["LockAnimation"])"
+           />
+        <div>
+            <WinSwitch Value="@(AppSettings.LockTips)"
+           ValueChanged="@((bool v) => { AppSettings.LockTips = v; SaveSettings(); })"
+           Label="@(Lang["LockTips"])"
+           />
+            <MudCollapse Expanded="@(AppSettings.LockTips)">
+                <MudStack Row="true" AlignItems="AlignItems.Start" Class="ml-7">
+                    <MudTextFieldExtended T="string"
+                                          @ref="_textTipsMessageRef"
+                                          @bind-Value="@(LockTipsMessage)"
+                                          Disabled="@(!_lockTipsMessageEdit)"
+                                          OnBlur="TipsMessageBlur"
+                                          OnKeyDown="TipsMessageKeyDown"
+                                          Immediate="true"
+                                          Label=""
+                                          Variant="Variant.Text"
+                                          Margin="Margin.Dense"
+                                          HelperText="@(Lang["LockTipsRemark"])">
+                        <AdornmentStart>
+                            <div style="opacity:0.5; font-size:13px;">
+                                @(Lang["LockHintText"])
+                            </div>
+                        </AdornmentStart>
+                    </MudTextFieldExtended>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   OnClick="EnableTipsMessageEditing"
+                                   Disabled="_lockTipsMessageEdit" />
+                </MudStack>
+            </MudCollapse>
+        </div>
+        <div>
+            <MudText Typo="Typo.subtitle2" Class="input-title">@(Lang["LockStatusDisplay"])</MudText>
+            <MudSelect T="LockStatusDisplay"
+                       Dense="true"
+                       Label=""
+                       Variant="Variant.Outlined"
+                       Value="@(AppSettings.LockStatusDisplay)"
+                       ValueChanged="LockStatusDisplayChanged"
+                       Class="max-width-fix"
+                       Margin="Margin.Dense">
+                <MudSelectItem Value="@(LockStatusDisplay.None)">@($"🚫 {Lang["LockStatusDisplayNone"]}")</MudSelectItem>
+                <MudSelectItem Value="@(LockStatusDisplay.BreathingTop)">@($"💡 {Lang["LockStatusDisplayBreathingTop"]}")</MudSelectItem>
+                <MudSelectItem Value="@(LockStatusDisplay.DotTopLeft)">@($"🔵 {Lang["LockStatusDisplayDotTopLeft"]}")</MudSelectItem>
+                <MudSelectItem Value="@(LockStatusDisplay.DotTopRight)">@($"🔴 {Lang["LockStatusDisplayDotTopRight"]}")</MudSelectItem>
+            </MudSelect>
+        </div>
+
+        @if (AppSettings.LockStatusDisplay != LockStatusDisplay.None)
+        {
+            <div class="ml-7">
+                <MudText Typo="Typo.caption" Class="mb-2">@(Lang["PresetColors"])</MudText>
+                <div class="preset-grid">
+                    @foreach (var preset in ColorPresets.Indicator)
+                    {
+                        <div class="preset-item @(AppSettings.BreathingPreset == preset.Id ? "preset-active" : "")"
+                             @onclick="() => ApplyBreathingPreset(preset)">
+                            <div class="preset-swatch @(preset.PeriodSeconds > 0 ? "preset-flow" : "")"
+                                 style="@($"--pg: {preset.CssGradient};")"></div>
+                            <span class="preset-name">@preset.DisplayName</span>
+                        </div>
+                    }
+                </div>
+
+                <MudText Typo="Typo.caption" Class="mb-2 mt-4">@(Lang["CustomColors"])</MudText>
+                <div class="d-flex align-center flex-wrap" style="gap:14px;">
+                    <input type="color"
+                           class="color-input"
+                           value="@AppSettings.BreathingColor1"
+                           @onchange="BreathingColor1Changed" />
+                    <input type="color"
+                           class="color-input"
+                           value="@AppSettings.BreathingColor2"
+                           @onchange="BreathingColor2Changed" />
+                    <MudIconButton Icon="@Icons.Material.Filled.SwapHoriz"
+                                   Size="Size.Small"
+                                   Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   OnClick="SwapBreathingColors" />
+                    <MudText Typo="Typo.caption" Style="opacity:0.6;">
+                        @(Lang["IndicatorColorTip"])
+                    </MudText>
+                </div>
+
+                @if (AppSettings.LockStatusDisplay.HasFlag(LockStatusDisplay.BreathingTop))
+                {
+                    <div class="d-flex align-center mt-3" style="gap:10px;">
+                        <WinSwitch Value="@AppSettings.BreathingAnimated"
+                                   ValueChanged="@((bool v) => { AppSettings.BreathingAnimated = v; SaveSettings(); })" />
+                        <MudText Typo="Typo.body2">@(Lang["AnimatedGradient"])</MudText>
+                    </div>
+                    <MudText Typo="Typo.caption" Class="input-tip">
+                        @(Lang["IndicatorFlowRemark"])
+                    </MudText>
+
+                    @if (AppSettings.BreathingAnimated)
+                    {
+                        <div class="mt-2" style="max-width:320px;">
+                        <SettingSlider Label="@(Lang["GradientSpeed"])"
+                          @bind-Value="AppSettings.BreathingSpeed"
+                          @bind-Value:after="SaveSettingsLive"
+                          Min="25" Max="300" Step="1" Suffix="%" />
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </MudStack>
+</MudPaper>

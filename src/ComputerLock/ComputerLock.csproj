@@ -1,0 +1,98 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+	<PropertyGroup>
+		<Authors>ruilin365</Authors>
+		<Company>ruilin365</Company>
+		<Copyright>Copyright (c) 2026 ruilin365. MIT License</Copyright>
+		<Product>时钟锁屏</Product>
+		<AssemblyTitle>时钟锁屏</AssemblyTitle>
+		<FileDescription>时钟锁屏 - 离开电脑时不让别人误操作的翻页时钟锁屏</FileDescription>
+		<AssemblyName>ClockLockScreen</AssemblyName>
+		<Version>0.8.6</Version>
+		<FileVersion>0.8.6.0</FileVersion>
+		<AssemblyVersion>0.8.6.0</AssemblyVersion>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<RootNamespace>ComputerLock</RootNamespace>
+		<ApplicationIcon>icon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<PublishSingleFile>true</PublishSingleFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="CodeBeam.MudBlazor.Extensions" Version="8.2.4" />
+		<PackageReference Include="JiuLing.CommonLibs" Version="1.7.7" />
+		<PackageReference Include="JiuLing.TitleBarKit" Version="1.0.3" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.WebView.Wpf" Version="8.0.100" />
+		<PackageReference Include="ModernWpfUI" Version="0.9.6" />
+		<PackageReference Include="MudBlazor" Version="8.12.0" />
+		<PackageReference Include="MudBlazor.Markdown" Version="8.11.0" />
+		<PackageReference Include="TaskScheduler" Version="2.12.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="icon.ico" />
+		<!--
+			翻页时钟预设字体，全部为 SIL Open Font License 授权，可随程序分发。
+			以文件形式随包发布到 fonts/ 目录（WPF 用 Fonts.GetFontFamilies 从文件加载，
+			比 pack:// 资源引用可靠，用户导入的字体也能走同一套逻辑）。
+		-->
+		<Content Include="res\*.ttf">
+			<Link>fonts\%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+		<Content Include="res\FONT-LICENSE.txt">
+			<Link>fonts\FONT-LICENSE.txt</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Resources\Lang.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Lang.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Resources\Resource.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resource.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Update="Resources\Lang.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Lang.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Resources\Resource.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resource.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="首次运行请看这里_Readme.txt">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<!-- 保留原作者的许可声明 -->
+		<None Include="..\..\LICENSE">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>LICENSE</Link>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\..\VERSION_HISTORY.md">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<Visible>false</Visible>
+		</None>
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+<Window x:Class="ComputerLock.WindowLockPreview"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:ComputerLock.Controls"
+        Title="锁屏预览"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Topmost="True"
+        ResizeMode="NoResize"
+        Focusable="False"
+        WindowStartupLocation="Manual">
+    <Grid>
+        <controls:LockSurface x:Name="Surface" />
+    </Grid>
+</Window>

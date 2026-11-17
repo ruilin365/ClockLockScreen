@@ -1,0 +1,457 @@
+﻿﻿html,
+body,
+#app,
+.page {
+    height: 100%;
+    user-select: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+.mud-appbar.mud-appbar-fixed-top {
+    padding-right: 0 !important;
+}
+
+.app-icon {
+    width: 20px;
+    height: 20px;
+    background-position: center center;
+    background-size: cover;
+    background-image: url("icon.ico");
+}
+
+.dialog-backdrop-filter {
+    backdrop-filter: blur(10px);
+    background-color: rgba(0, 0, 0, 0.3);
+}
+
+.mud-nav-link.active:not(.mud-nav-link-disabled),
+.mud-nav-link.active:not(.mud-nav-link-disabled) .mud-icon-root {
+    color: var(--mud-palette-primary) !important;
+    font-weight: var(--mud-typography-default-weight) !important;
+}
+
+.titlebar-btn.mud-icon-button {
+    border-radius: 0 !important;
+    padding: 8px !important;
+    color: #424242 !important;
+}
+
+    .titlebar-btn.mud-icon-button:hover {
+        background-color: #E0E0E0 !important;
+    }
+
+
+.dark-mode .titlebar-btn.mud-icon-button {
+    color: #CCCCCC !important;
+}
+
+    .dark-mode .titlebar-btn.mud-icon-button:hover {
+        background-color: #333333 !important;
+    }
+
+.close-btn.mud-icon-button:hover {
+    background-color: #E57373 !important;
+    color: #FFFFFF !important;
+}
+
+.dark-mode .close-btn.mud-icon-button:hover {
+    background-color: #E81123 !important;
+    color: #FFFFFF !important;
+}
+
+/* 分组标题样式 */
+.group-title {
+    font-size: 0.95rem !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em !important;
+    color: #888888 !important;
+    margin-bottom: 1.3rem !important;
+}
+
+.dark-mode .group-title {
+    color: #BBBBBB !important;
+}
+
+
+.no-left-padding {
+    margin-left: -6px !important;
+}
+
+.max-width-fix {
+    max-width: fit-content !important;
+}
+
+.input-title {
+    margin-bottom: 2px !important;
+    opacity: 0.8;
+}
+
+.input-tip {
+    opacity: 0.6;
+}
+
+/* 时钟背景色选择色板 */
+.color-swatch {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid rgba(128, 128, 128, 0.35);
+    transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+
+.color-swatch:hover {
+    transform: scale(1.12);
+}
+
+.color-swatch-active {
+    border-color: #0078D4;
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.30);
+}
+
+/* 配色预设 */
+.preset-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(86px, 1fr));
+    gap: 10px;
+}
+
+.preset-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.preset-item:hover {
+    transform: translateY(-1px);
+}
+
+.preset-active {
+    border-color: #0078D4;
+}
+
+.preset-swatch {
+    position: relative;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid rgba(128, 128, 128, 0.3);
+    overflow: hidden;
+    background-image: var(--pg);
+    background-size: 200% 100%;
+}
+
+/* 预设预览也动起来，直观看到「流动」是什么效果 */
+.preset-swatch.preset-flow::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 200%;
+    background-image: var(--pg);
+    background-size: 50% 100%;
+    background-repeat: repeat-x;
+}
+
+/*
+   只有当前选中的预设才流动。
+   之前 8 个色块一起无限动画，WebView2 会一直满帧重绘，白占 CPU。
+*/
+.preset-item.preset-active .preset-swatch.preset-flow::before {
+    animation: preset-flow 7s linear infinite;
+}
+
+
+@keyframes preset-flow {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.preset-name {
+    font-size: 11px;
+    text-align: center;
+    opacity: 0.75;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 原生调色板入口 */
+.color-input {
+    width: 46px;
+    height: 34px;
+    padding: 0;
+    border: 1px solid rgba(128, 128, 128, 0.4);
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.color-input::-webkit-color-swatch-wrapper {
+    padding: 2px;
+}
+
+.color-input::-webkit-color-swatch {
+    border: none;
+    border-radius: 4px;
+}
+
+
+/* ================= Windows 11 毛玻璃（亚克力） =================
+   颜色由 MudBlazor 主题的调色板给出（半透明），这里只负责模糊、描边和投影。
+   窗口底层由 DWM 亚克力提供模糊；DWM 不可用时窗口背景本身不透明，观感依然成立。 */
+:root {
+    --glass-border: rgba(255, 255, 255, 0.70);
+    --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 8px 24px rgba(0, 0, 0, 0.06);
+    --glass-blur: blur(60px) saturate(150%);
+}
+
+.dark-mode {
+    --glass-border: rgba(255, 255, 255, 0.075);
+    --glass-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.22);
+}
+
+html,
+body,
+#app {
+    background: transparent !important;
+}
+
+/* 页面底色：一层薄薄的不透明色，保证文字对比度；桌面仍能透过亚克力看出来 */
+.mud-layout {
+    background-color: rgba(255, 255, 255, 0.38) !important;
+}
+
+.mud-layout.dark-mode {
+    background-color: rgba(20, 20, 24, 0.34) !important;
+}
+
+/* 能让桌面透过来的区域统一加模糊 */
+.mud-appbar,
+.mud-drawer-content,
+.mud-paper,
+.mud-popover,
+.mud-dialog {
+    backdrop-filter: var(--glass-blur);
+}
+
+.mud-appbar {
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: none !important;
+}
+
+.mud-drawer {
+    border-right: 1px solid var(--glass-border);
+}
+
+/* 卡片描边与投影（内容容器在页面里已单独透明，不受影响） */
+.mud-paper {
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow) !important;
+}
+
+.mud-popover,
+.mud-dialog {
+    border: 1px solid var(--glass-border);
+}
+
+.mud-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.dark-mode .mud-nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+
+/* ================= Windows 11 风格开关 ================= */
+.win-switch {
+    position: relative;
+    flex: none;
+    width: 40px;
+    height: 20px;
+    padding: 0;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.42);
+    background-color: rgba(0, 0, 0, 0.10);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.win-switch:hover {
+    background-color: rgba(0, 0, 0, 0.18);
+}
+
+.win-switch-on,
+.win-switch-on:hover {
+    background-color: #0078D4;
+    border-color: #0078D4;
+}
+
+.win-switch-knob {
+    position: absolute;
+    top: 50%;
+    left: 3px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #5D5D5D;
+    transform: translateY(-50%);
+    transition: left 0.15s ease, background-color 0.15s ease, width 0.12s ease, height 0.12s ease;
+}
+
+.win-switch-on .win-switch-knob {
+    left: 23px;
+    background-color: #FFFFFF;
+}
+
+/* 按下时圆点略微变大，和 Windows 的反馈一致 */
+.win-switch:active .win-switch-knob {
+    width: 15px;
+    height: 15px;
+}
+
+.dark-mode .win-switch {
+    border-color: rgba(255, 255, 255, 0.32);
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.dark-mode .win-switch:hover {
+    background-color: rgba(255, 255, 255, 0.20);
+}
+
+.dark-mode .win-switch-on,
+.dark-mode .win-switch-on:hover {
+    background-color: #4CC2FF;
+    border-color: #4CC2FF;
+}
+
+.dark-mode .win-switch-knob {
+    background-color: #B8B8B8;
+}
+
+.dark-mode .win-switch-on .win-switch-knob {
+    background-color: #202020;
+}
+
+/* 开关行 */
+.win-switch-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 24px;
+}
+
+.win-switch-label {
+    font-size: 0.875rem;
+    line-height: 1.2;
+    cursor: pointer;
+    user-select: none;
+}
+
+.win-switch-disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* ---------------- 设置滑块 + 可编辑数值 ---------------- */
+
+.setting-slider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+
+.setting-slider .mud-slider {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.setting-slider-value {
+    display: flex;
+    align-items: baseline;
+    gap: 3px;
+    flex: 0 0 auto;
+}
+
+/* 数值框：默认看起来像文本，点进去才能编辑 */
+.num-input {
+    width: 62px;
+    padding: 2px 6px;
+    text-align: right;
+    font-size: 13px;
+    font-family: inherit;
+    color: inherit;
+    background: transparent;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.num-input:hover {
+    border-color: rgba(128, 128, 128, 0.65);
+}
+
+.num-input:focus {
+    border-color: #0078D4;
+    background: rgba(0, 120, 212, 0.08);
+}
+
+/* 隐藏数字框的上下箭头，靠键盘上下键调节 */
+.num-input::-webkit-outer-spin-button,
+.num-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.num-suffix {
+    font-size: 12px;
+    opacity: 0.65;
+    min-width: 15px;
+}
+
+/* ---------------- 开销警告 ---------------- */
+
+.cost-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 7px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 185, 0, 0.45);
+    background: rgba(255, 185, 0, 0.10);
+    font-size: 12px;
+    line-height: 1.5;
+    color: inherit;
+    opacity: 0.95;
+}
+
+.cost-warning-icon {
+    flex: 0 0 auto;
+    margin-top: 1px;
+    color: #E8A400;
+}
+
+.mud-theme-dark .cost-warning {
+    border-color: rgba(255, 205, 80, 0.40);
+    background: rgba(255, 205, 80, 0.12);
+}
+
+.mud-theme-dark .cost-warning-icon {
+    color: #FFC83D;
+}
