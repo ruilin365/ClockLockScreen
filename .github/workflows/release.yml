@@ -8,6 +8,10 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    # softprops/action-gh-release 需要写权限才能创建 Release，
+    # 新仓库的 GITHUB_TOKEN 默认是只读，必须显式申请
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
