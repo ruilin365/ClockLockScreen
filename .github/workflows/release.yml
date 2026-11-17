@@ -40,5 +40,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          body_path: ${{github.workspace}}\README.md
+          body_path: ${{github.workspace}}\.github\RELEASE_NOTE.md
           files: ${{github.workspace}}\src\ComputerLock\bin\Release\ClockLockScreen_${{ steps.tagName.outputs.tag }}_win_x64.zip
