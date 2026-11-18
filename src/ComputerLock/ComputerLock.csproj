@@ -8,9 +8,9 @@
 		<AssemblyTitle>时钟锁屏</AssemblyTitle>
 		<FileDescription>时钟锁屏 - 离开电脑时不让别人误操作的翻页时钟锁屏</FileDescription>
 		<AssemblyName>ClockLockScreen</AssemblyName>
-		<Version>0.8.7</Version>
-		<FileVersion>0.8.7.0</FileVersion>
-		<AssemblyVersion>0.8.7.0</AssemblyVersion>
+		<Version>0.8.8</Version>
+		<FileVersion>0.8.8.0</FileVersion>
+		<AssemblyVersion>0.8.8.0</AssemblyVersion>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0-windows</TargetFramework>
 		<Nullable>enable</Nullable>

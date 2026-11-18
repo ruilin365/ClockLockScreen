@@ -23,6 +23,13 @@ namespace ComputerLock
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             _logger.Info("空白屏幕 -> 准备锁定");
+
+            // 实时模糊要截「自己背后的画面」，不把自己排除掉就会越截越糊
+            if (!Platforms.DesktopSnapshot.ExcludeFromCapture(
+                    new System.Windows.Interop.WindowInteropHelper(this).Handle))
+            {
+                _logger.Info("空白屏幕 -> 排除截屏标记失败，实时模糊可能失效");
+            }
             if (_appSettings.LockStatusDisplay.HasFlag(LockStatusDisplay.BreathingTop))
             {
                 _logger.Info("空白屏幕 -> 启用顶部呼吸灯");

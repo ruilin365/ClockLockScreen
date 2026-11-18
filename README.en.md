@@ -4,7 +4,7 @@
 
 > Your AI agent is still running, a download is halfway done, a script hasn't finished — you step away, but the PC must not sleep and nobody should touch your screen.
 
-A small Windows lock-screen utility. It only covers the screen: it never touches the system power policy and never interrupts background processes. What covers the screen can be a nearly invisible transparent film, an adjustable black overlay, or a full-screen translucent flip clock.
+A small Windows lock-screen utility. It only covers the screen: it never touches the system power policy and never interrupts background processes. The picture is built from three stacked layers — **screen blur (frosted glass)**, a **full-screen mask** (any solid colour or gradient), and a **flip clock**. Each layer has its own switch and they combine freely; turn all three off and the screen is fully transparent.
 
 <br>
 
@@ -51,18 +51,18 @@ A small Windows lock-screen utility. It only covers the screen: it never touches
 |---|---|---|
 | Grabbing water / joining a meeting | Password every time, and a wait on return | One hotkey to lock, unlock instantly |
 | Background jobs still running | Screen saver / sleep kicks in by default | Never touches the power policy, jobs keep running |
-| Sensitive content on screen | Locks, but the look is fixed | Background and clock opacity are separate; at 20% only a shadow remains |
-| Just don't want others clicking around | All or nothing | Transparent / overlay / clock — pick one |
+| Sensitive content on screen | Locks, but the look is fixed | Drop the mask opacity to 20% for a shadow, and add blur so shapes stay but content doesn't |
+| Logs are scrolling and you want to know it's alive | You can't see anything while locked | Turn on live blur — moving text behind stays faintly visible |
 
 ## Features
 
-- **Three lock appearances**
-  - Fully transparent: nothing changes on screen, keyboard and mouse are locked
-  - Black overlay: opacity adjustable 0–100%
-  - Flip clock: solid or mesh-gradient background with flip digits, opacity and size adjustable
+- **Three layers, combined freely** (bottom to top: blur → mask → clock)
+  - Screen blur (frosted glass): frozen or live, strength 0–100%. Frozen grabs one snapshot at lock time — best privacy, lowest CPU; live re-captures at 1–10 fps so movement behind stays visible
+  - Full-screen mask: a single colour layer covering the screen, any solid colour or mesh gradient, opacity 0–100%
+  - Flip clock: digits and cards only, no background
 - **Flip clock**: four-layer clipped flip — top half falls, bottom half rises, no ghosting while squashing; optional seconds; extra gap between hh / mm / ss groups
 - **Fonts**: 7 bundled SIL OFL fonts (Bebas Neue / Barlow Condensed / Oswald / Archivo Narrow / Anton / Orbitron / Share Tech Mono), plus import your own `.ttf` / `.otf`; font size auto-fits the glyph box
-- **Everything adjustable**: background opacity, clock opacity, clock size, vertical position, digit gap, group gap, flip speed, animation frame rate (10–240 fps, default 60), card corner radius, card fill, card border, seam line, show seconds — all sliders or switches; dragging applies live, and every number can be typed in directly (two decimals)
+- **Everything adjustable**: blur strength, mask opacity, clock opacity, clock size, vertical position, digit gap, group gap, flip speed, animation frame rate (10–240 fps, default 90), card corner radius, card fill, card border, seam line, show seconds — all sliders or switches; dragging applies live, and every number can be typed in directly (two decimals)
 - **Palettes**: solid black by default (lightest); 8 mesh-gradient backgrounds and 12 light-bar palettes inspired by [WLED](https://github.com/wled/WLED), with optional drift. Gradients cost noticeably more CPU / memory — the settings page says so up front
 - **Settings UI**: Windows 11 acrylic with Windows 11 style switches, changes apply instantly
 - **Preview mode**: no locking — renders the effect on top of the desktop with click-through, so you can tweak while watching

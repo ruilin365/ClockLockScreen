@@ -33,6 +33,13 @@ public partial class WindowLockScreen : Window
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         _logger.Info("功能屏幕 -> 准备锁定");
+
+        // 实时模糊要截「自己背后的画面」，不把自己排除掉就会越截越糊
+        if (!Platforms.DesktopSnapshot.ExcludeFromCapture(
+                new System.Windows.Interop.WindowInteropHelper(this).Handle))
+        {
+            _logger.Info("功能屏幕 -> 排除截屏标记失败，实时模糊可能失效");
+        }
         LblPassword.Content = _lang["Password"];
 
         _logger.Info($"功能屏幕 -> 启用密码框：{_appSettings.EnablePasswordBox}");

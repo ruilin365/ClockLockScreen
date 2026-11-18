@@ -173,9 +173,23 @@ public partial class LockSettings : IDisposable
         }
     }
 
-    private void LockStyleChanged(LockScreenStyle style)
+    /// <summary>
+    /// 把锁屏画面外观恢复成默认（不动密码、快捷键、自动锁定）
+    /// </summary>
+    private void ResetAppearanceToDefault()
     {
-        AppSettings.LockStyle = style;
+        AppSettings.ResetAppearance();
+        SaveSettings();
+        StateHasChanged();
+        Snackbar.Add(Lang["ResetAppearanceDone"], Severity.Success);
+    }
+
+    /// <summary>
+    /// 模糊方式：定格（截一张）或实时（跟着屏幕刷新）
+    /// </summary>
+    private void BlurModeChanged(LockBlurMode mode)
+    {
+        AppSettings.LockBlurMode = mode;
         SaveSettings();
     }
 
@@ -253,58 +267,58 @@ public partial class LockSettings : IDisposable
         }
     }
 
-    private void ClockBackgroundModeChanged(ClockBackgroundMode mode)
+    private void MaskFillModeChanged(ClockBackgroundMode mode)
     {
-        AppSettings.ClockBackgroundMode = mode;
-        // 刚切到有背景时，如果还没选过预设，给一套默认的
-        if (mode != ClockBackgroundMode.None
-            && string.IsNullOrEmpty(AppSettings.ClockBackgroundPreset)
-            && string.IsNullOrWhiteSpace(AppSettings.ClockBackgroundColor1))
+        AppSettings.MaskFillMode = mode;
+        // 刚切到渐变时，如果还没选过预设，给一套默认配色
+        if (mode == ClockBackgroundMode.Gradient
+            && string.IsNullOrEmpty(AppSettings.MaskPreset)
+            && string.IsNullOrWhiteSpace(AppSettings.MaskColor1))
         {
-            ApplyClockPreset(ColorPresets.Find(ColorPresets.Background, "bg-aurora") ?? ColorPresets.Background[0]);
+            ApplyMaskPreset(ColorPresets.Find(ColorPresets.Background, "bg-aurora") ?? ColorPresets.Background[0]);
             return;
         }
         SaveSettings();
     }
 
-    #region 时钟背景配色
+    #region 遮罩配色
 
-    private void ApplyClockPreset(ColorPreset preset)
+    private void ApplyMaskPreset(ColorPreset preset)
     {
-        AppSettings.ClockBackgroundPreset = preset.Id;
+        AppSettings.MaskPreset = preset.Id;
         // 同时把首尾色写进自定义槽，切到自定义时有个合理的起点
-        AppSettings.ClockBackgroundColor1 = preset.Stops[0].Hex;
-        AppSettings.ClockBackgroundColor2 = preset.Stops[^1].Hex;
+        AppSettings.MaskColor1 = preset.Stops[0].Hex;
+        AppSettings.MaskColor2 = preset.Stops[^1].Hex;
         SaveSettings();
     }
 
-    private void ClockColor1Changed(ChangeEventArgs args)
+    private void MaskColor1Changed(ChangeEventArgs args)
     {
         if (args.Value?.ToString() is not { Length: > 0 } value)
         {
             return;
         }
-        AppSettings.ClockBackgroundColor1 = NormalizeColor(value);
-        AppSettings.ClockBackgroundPreset = "";   // 手改过颜色就不再算预设
+        AppSettings.MaskColor1 = NormalizeColor(value);
+        AppSettings.MaskPreset = "";   // 手改过颜色就不再算预设
         SaveSettings();
     }
 
-    private void ClockColor2Changed(ChangeEventArgs args)
+    private void MaskColor2Changed(ChangeEventArgs args)
     {
         if (args.Value?.ToString() is not { Length: > 0 } value)
         {
             return;
         }
-        AppSettings.ClockBackgroundColor2 = NormalizeColor(value);
-        AppSettings.ClockBackgroundPreset = "";
+        AppSettings.MaskColor2 = NormalizeColor(value);
+        AppSettings.MaskPreset = "";
         SaveSettings();
     }
 
-    private void SwapClockColors()
+    private void SwapMaskColors()
     {
-        (AppSettings.ClockBackgroundColor1, AppSettings.ClockBackgroundColor2) =
-            (AppSettings.ClockBackgroundColor2, AppSettings.ClockBackgroundColor1);
-        AppSettings.ClockBackgroundPreset = "";
+        (AppSettings.MaskColor1, AppSettings.MaskColor2) =
+            (AppSettings.MaskColor2, AppSettings.MaskColor1);
+        AppSettings.MaskPreset = "";
         SaveSettings();
     }
 

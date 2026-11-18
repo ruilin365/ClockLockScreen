@@ -3,7 +3,7 @@ using Application = System.Windows.Application;
 
 namespace ComputerLock.Services;
 
-internal class PasswordScreenLockService(IServiceProvider serviceProvider, IStringLocalizer<Lang> lang, ILogger logger, PopupService popupService)
+internal class PasswordScreenLockService(IServiceProvider serviceProvider, IStringLocalizer<Lang> lang, ILogger logger, PopupService popupService, AppSettings appSettings)
     : ScreenLockBaseService
 {
     private bool _showAnimation;
@@ -27,6 +27,9 @@ internal class PasswordScreenLockService(IServiceProvider serviceProvider, IStri
             logger.Info("密码屏幕锁定 -> 锁定动画");
             popupService.ShowMessage(lang["Locked"]);
         }
+
+        // 定格模糊要在窗口铺满屏幕之前截好
+        Platforms.DesktopSnapshot.PrepareFrozenIfNeeded(appSettings);
 
         if (_blankScreens.Count > 0)
         {
@@ -75,6 +78,8 @@ internal class PasswordScreenLockService(IServiceProvider serviceProvider, IStri
             screen.Unlock();
             screen.Close();
         }
+
+        Platforms.DesktopSnapshot.ClearFrozen();
 
         if (_showAnimation)
         {

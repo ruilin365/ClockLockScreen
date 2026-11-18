@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Interop;
 using Application = System.Windows.Application;
 
 namespace ComputerLock.Services;
@@ -44,6 +45,10 @@ public class LockPreviewService
             _mainWindow = main;
             main.Topmost = true;
             main.Activate();
+
+            // 取景时设置窗口也排除掉：真实锁屏时它并不存在，
+            // 不然预览里看到的是「模糊的设置窗口」，不像锁屏效果
+            Platforms.DesktopSnapshot.ExcludeFromCapture(new WindowInteropHelper(main).Handle);
 
             // 设置窗口一旦最小化/隐藏，就把预览关掉。
             // 否则那层置顶的预览会挡在托盘和任务栏前面，用户既看不见设置也点不到托盘，只能强杀进程。
@@ -102,6 +107,8 @@ public class LockPreviewService
         if (Application.Current?.MainWindow is { } main)
         {
             main.Topmost = false;
+            // 预览结束，设置窗口恢复参与截屏
+            Platforms.DesktopSnapshot.IncludeInCapture(new WindowInteropHelper(main).Handle);
         }
     }
 }

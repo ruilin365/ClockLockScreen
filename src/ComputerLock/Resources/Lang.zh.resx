@@ -618,4 +618,61 @@
 <data name="ClockGapRemark" xml:space="preserve">
 	  <value>数字间距是同一组里两位数之间的距离，时分秒间距是三组之间的距离</value>
   </data>
+  <data name="BlurEnabled" xml:space="preserve">
+	  <value>屏幕模糊（毛玻璃）</value>
+  </data>
+  <data name="BlurMode" xml:space="preserve">
+	  <value>模糊方式</value>
+  </data>
+  <data name="BlurModeFrozen" xml:space="preserve">
+	  <value>定格（锁屏瞬间截一张，最省 CPU）</value>
+  </data>
+  <data name="BlurModeLive" xml:space="preserve">
+	  <value>实时（跟随屏幕变化，能看到背后在动）</value>
+  </data>
+  <data name="BlurStrength" xml:space="preserve">
+	  <value>模糊程度</value>
+  </data>
+  <data name="BlurRefreshRate" xml:space="preserve">
+	  <value>刷新频率</value>
+  </data>
+  <data name="BlurFrozenRemark" xml:space="preserve">
+	  <value>锁屏那一刻截一张，之后画面不动。隐私最好、最省 CPU，模糊程度可以随便调。</value>
+  </data>
+  <data name="BlurLiveRemark" xml:space="preserve">
+	  <value>实时模式会按下面的频率重新取一次屏，所以背后滚动的内容能隐约看出来。每次取屏约 20~30 毫秒，频率越高越跟手，也越费 CPU。</value>
+  </data>
+  <data name="BlurCoveredTip" xml:space="preserve">
+	  <value>模糊在最底层。如果「时钟背景」不透明，会把模糊整片盖住——想看到毛玻璃，就把背景设为「无」，或者把背景不透明度调低。</value>
+  </data>
+  <data name="LayerComposeTip" xml:space="preserve">
+	  <value>三层从下到上依次是模糊、遮罩、时钟，可以任意组合；全都不开就是完全透明。</value>
+  </data>
+  <data name="MaskEnabled" xml:space="preserve">
+	  <value>全屏遮罩</value>
+  </data>
+  <data name="ClockEnabled" xml:space="preserve">
+	  <value>翻页时钟</value>
+  </data>
+  <data name="MaskFill" xml:space="preserve">
+	  <value>遮罩填充</value>
+  </data>
+  <data name="MaskFillSolid" xml:space="preserve">
+	  <value>纯色</value>
+  </data>
+  <data name="MaskFillGradient" xml:space="preserve">
+	  <value>渐变</value>
+  </data>
+  <data name="BlurMaskTip" xml:space="preserve">
+	  <value>建议把「遮罩不透明度」降到 30% 以下，否则遮罩会把模糊整片盖住，看不出毛玻璃效果。</value>
+  </data>
+  <data name="ResetAppearance" xml:space="preserve">
+	  <value>恢复默认外观</value>
+  </data>
+  <data name="ResetAppearanceRemark" xml:space="preserve">
+	  <value>只重置模糊、遮罩、时钟、状态提示；密码、快捷键、自动锁定不受影响</value>
+  </data>
+  <data name="ResetAppearanceDone" xml:space="preserve">
+	  <value>已恢复默认外观</value>
+  </data>
 </root>

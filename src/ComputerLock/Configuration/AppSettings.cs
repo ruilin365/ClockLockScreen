@@ -151,7 +151,7 @@ public class AppSettings
     /// <summary>
     /// 锁屏状态展示
     /// </summary>
-    public LockStatusDisplay LockStatusDisplay { get; set; } = LockStatusDisplay.None;
+    public LockStatusDisplay LockStatusDisplay { get; set; } = LockStatusDisplay.BreathingTop;
 
     /// <summary>
     /// 启用软件渲染
@@ -175,23 +175,93 @@ public class AppSettings
 
     /// <summary>
     /// 锁屏样式：0 完全透明 / 1 黑色遮罩 / 2 翻页时钟
+    /// 已被三个独立开关取代，只为读取老配置保留
     /// </summary>
+    [Obsolete("已改为 LockBlurEnabled / LockMaskEnabled / LockClockEnabled 三个独立开关")]
     public LockScreenStyle LockStyle { get; set; } = LockScreenStyle.Clock;
 
     /// <summary>
-    /// 黑色遮罩的透明度（0-100，越大越黑）
+    /// 屏幕模糊（毛玻璃）开关
     /// </summary>
-    public double LockMaskOpacity { get; set; } = 60;
+    public bool LockBlurEnabled { get; set; } = true;
+
+    /// <summary>
+    /// 模糊实现方式：实时（DWM 材质）/ 定格（截屏后自模糊）
+    /// </summary>
+    public LockBlurMode LockBlurMode { get; set; } = LockBlurMode.Frozen;
+
+    /// <summary>
+    /// 定格模式的模糊程度（0-100，对应模糊半径）。
+    /// 默认给得很轻，太糊就只剩一片色块，看不出背后有没有东西在动
+    /// </summary>
+    public double LockBlurStrength { get; set; } = 8;
+
+    /// <summary>
+    /// 实时模式的取景刷新频率（1-10 fps）。越高越跟得上屏幕变化，也越费 CPU
+    /// </summary>
+    public double LockBlurRefreshRate { get; set; } = 3;
+
+    /// <summary>
+    /// 全屏遮罩开关。遮罩就是铺满整屏的一层颜色，可以是任意纯色或渐变，
+    /// 本质上就是一个「能指定颜色的全屏蒙版」
+    /// </summary>
+    public bool LockMaskEnabled { get; set; } = true;
+
+    /// <summary>
+    /// 翻页时钟开关
+    /// </summary>
+    public bool LockClockEnabled { get; set; } = true;
+
+    /// <summary>
+    /// 遮罩的不透明度（0-100）
+    /// </summary>
+    public double LockMaskOpacity { get; set; } = 35;
+
+    /// <summary>
+    /// 遮罩填充方式：纯色 / 渐变
+    /// </summary>
+    public ClockBackgroundMode MaskFillMode { get; set; } = ClockBackgroundMode.Solid;
+
+    /// <summary>
+    /// 遮罩颜色（纯色时使用，渐变时为起始色）
+    /// </summary>
+    public string MaskColor1 { get; set; } = "#000000";
+
+    /// <summary>
+    /// 遮罩颜色（渐变时为结束色）
+    /// </summary>
+    public string MaskColor2 { get; set; } = "#000000";
+
+    /// <summary>
+    /// 遮罩渐变角度（0-360，0 为从左到右）
+    /// </summary>
+    public double MaskAngle { get; set; } = 45;
+
+    /// <summary>
+    /// 遮罩当前选中的预设配色 Id，空表示自定义
+    /// </summary>
+    public string MaskPreset { get; set; } = "bg-black";
+
+    /// <summary>
+    /// 遮罩渐变是否流动
+    /// </summary>
+    public bool MaskAnimated { get; set; } = true;
+
+    /// <summary>
+    /// 遮罩渐变流动速度百分比（50-300）
+    /// </summary>
+    public double MaskSpeed { get; set; } = 175;
+
+    /// <summary>
+    /// 是否已经把「时钟背景」迁移成「遮罩颜色」。
+    /// 老配置里没有这个字段，读出来是 false，正好用来做一次性迁移。
+    /// </summary>
+    public bool MaskFillMigrated { get; set; }
 
     /// <summary>
     /// 翻页时钟（数字与牌面）的不透明度（0-100）
     /// </summary>
     public double ClockOpacity { get; set; } = 80;
-
-    /// <summary>
-    /// 时钟背景的不透明度（0-100），与时钟本身分开调
-    /// </summary>
-    public double ClockBackgroundOpacity { get; set; } = 100;
 
     /// <summary>
     /// 时钟字体预设 Id（见 ClockFonts）
@@ -216,12 +286,12 @@ public class AppSettings
     /// <summary>
     /// 牌面圆角（0-60）
     /// </summary>
-    public double ClockCardRadius { get; set; } = 14;
+    public double ClockCardRadius { get; set; } = 20;
 
     /// <summary>
     /// 牌面浓度：牌面底色的不透明度（0-100，0 只剩数字）
     /// </summary>
-    public double ClockCardShade { get; set; } = 65;
+    public double ClockCardShade { get; set; } = 90;
 
     /// <summary>
     /// 是否显示牌面边框
@@ -241,17 +311,17 @@ public class AppSettings
     /// <summary>
     /// 动画帧率上限（15-60）。翻页、光条、背景漂移都受它约束，调低省 CPU，调高更顺
     /// </summary>
-    public double AnimationFrameRate { get; set; } = 60;
+    public double AnimationFrameRate { get; set; } = 90;
 
     /// <summary>
     /// 时钟大小百分比（50-150）
     /// </summary>
-    public double ClockScale { get; set; } = 100;
+    public double ClockScale { get; set; } = 130;
 
     /// <summary>
     /// 翻页时钟是否显示秒
     /// </summary>
-    public bool ClockShowSeconds { get; set; }
+    public bool ClockShowSeconds { get; set; } = true;
 
     /// <summary>
     /// 时分秒各自两位数字之间的间距（像素，0-80）
@@ -261,62 +331,27 @@ public class AppSettings
     /// <summary>
     /// 时 / 分 / 秒 三组之间的间距（像素，0-160）
     /// </summary>
-    public double ClockGroupGap { get; set; } = 28;
-
-    /// <summary>
-    /// 时钟背景方式
-    /// </summary>
-    public ClockBackgroundMode ClockBackgroundMode { get; set; } = ClockBackgroundMode.Solid;
-
-    /// <summary>
-    /// 时钟背景色（单色模式使用，渐变模式为起始色）
-    /// </summary>
-    public string ClockBackgroundColor1 { get; set; } = "#000000";
-
-    /// <summary>
-    /// 时钟背景色（渐变模式为结束色）
-    /// </summary>
-    public string ClockBackgroundColor2 { get; set; } = "#2B2B45";
-
-    /// <summary>
-    /// 时钟渐变角度（0-360，0 为从左到右）
-    /// </summary>
-    public double ClockBackgroundAngle { get; set; } = 45;
+    public double ClockGroupGap { get; set; } = 35;
 
     /// <summary>
     /// 锁屏状态提示（呼吸灯/圆点）的起始颜色，两个颜色相同时为单色
     /// </summary>
-    public string BreathingColor1 { get; set; } = "#fb8c00";
+    public string BreathingColor1 { get; set; } = "#776121";
 
     /// <summary>
     /// 锁屏状态提示（呼吸灯/圆点）的结束颜色
     /// </summary>
-    public string BreathingColor2 { get; set; } = "#fb8c00";
-
-    /// <summary>
-    /// 时钟背景当前选中的预设方案 Id，空表示自定义
-    /// </summary>
-    public string ClockBackgroundPreset { get; set; } = "";
+    public string BreathingColor2 { get; set; } = "#043365";
 
     /// <summary>
     /// 状态提示当前选中的预设方案 Id，空表示自定义
     /// </summary>
-    public string BreathingPreset { get; set; } = "";
-
-    /// <summary>
-    /// 时钟背景渐变是否流动
-    /// </summary>
-    public bool ClockBackgroundAnimated { get; set; } = true;
-
-    /// <summary>
-    /// 流动速度百分比（50-300），100 表示预设自带速度
-    /// </summary>
-    public double ClockBackgroundSpeed { get; set; } = 100;
+    public string BreathingPreset { get; set; } = "ind-drywet";
 
     /// <summary>
     /// 状态提示（顶部光条）渐变是否流动
     /// </summary>
-    public bool BreathingAnimated { get; set; } = true;
+    public bool BreathingAnimated { get; set; }
 
     /// <summary>
     /// 状态提示流动速度百分比
@@ -333,4 +368,47 @@ public class AppSettings
     /// 是否已经把老配置的默认字体迁移到 Bebas Neue，作用同上
     /// </summary>
     public bool DefaultFontApplied { get; set; }
+
+    /// <summary>
+    /// 「恢复默认」的作用范围：只碰锁屏画面的外观。
+    /// 密码、快捷键、自动锁定、开机启动这些个人设置一律不动。
+    /// </summary>
+    private static readonly string[] AppearanceProperties =
+    [
+        nameof(LockBlurEnabled), nameof(LockBlurMode), nameof(LockBlurStrength), nameof(LockBlurRefreshRate),
+        nameof(LockMaskEnabled), nameof(LockMaskOpacity), nameof(MaskFillMode), nameof(MaskColor1),
+        nameof(MaskColor2), nameof(MaskAngle), nameof(MaskPreset), nameof(MaskAnimated), nameof(MaskSpeed),
+        nameof(LockClockEnabled), nameof(ClockOpacity), nameof(ClockFontId), nameof(ClockOffsetY),
+        nameof(ClockCardRadius), nameof(ClockCardShade), nameof(ClockCardBorder), nameof(ClockSeamLine),
+        nameof(ClockFlipSpeed), nameof(AnimationFrameRate), nameof(ClockScale), nameof(ClockShowSeconds),
+        nameof(ClockCardGap), nameof(ClockGroupGap),
+        nameof(LockStatusDisplay), nameof(BreathingColor1), nameof(BreathingColor2),
+        nameof(BreathingPreset), nameof(BreathingAnimated), nameof(BreathingSpeed),
+        nameof(LockAnimation)
+    ];
+
+    /// <summary>
+    /// 把锁屏画面的外观恢复成出厂默认。
+    /// 迁移标记一律不碰，否则下次启动会再迁移一遍，把刚恢复的设置又覆盖掉。
+    /// </summary>
+    public void ResetAppearance()
+    {
+        var defaults = new AppSettings();
+        var type = typeof(AppSettings);
+        foreach (var name in AppearanceProperties)
+        {
+            var property = type.GetProperty(name);
+            if (property is not { CanWrite: true })
+            {
+                continue;
+            }
+            property.SetValue(this, property.GetValue(defaults));
+        }
+    }
+
+    /// <summary>
+    /// 是否已经把「锁屏样式三选一」拆成模糊/遮罩/时钟三个独立开关。
+    /// 老配置里没有这个字段，读出来是 false，正好用来做一次性迁移。
+    /// </summary>
+    public bool SplitLockLayersApplied { get; set; }
 }

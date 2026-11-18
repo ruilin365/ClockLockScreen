@@ -618,4 +618,61 @@
 <data name="ClockGapRemark" xml:space="preserve">
 	  <value>Digit gap is between the two digits of one group; group gap is between hours, minutes and seconds</value>
   </data>
+  <data name="BlurEnabled" xml:space="preserve">
+	  <value>Screen blur (frosted glass)</value>
+  </data>
+  <data name="BlurMode" xml:space="preserve">
+	  <value>Blur mode</value>
+  </data>
+  <data name="BlurModeFrozen" xml:space="preserve">
+	  <value>Frozen (snapshot once, lowest CPU)</value>
+  </data>
+  <data name="BlurModeLive" xml:space="preserve">
+	  <value>Live (follows the screen)</value>
+  </data>
+  <data name="BlurStrength" xml:space="preserve">
+	  <value>Blur strength</value>
+  </data>
+  <data name="BlurRefreshRate" xml:space="preserve">
+	  <value>Refresh rate</value>
+  </data>
+  <data name="BlurFrozenRemark" xml:space="preserve">
+	  <value>Captures the screen once at lock time and keeps it still. Best privacy, lowest CPU, strength fully adjustable.</value>
+  </data>
+  <data name="BlurLiveRemark" xml:space="preserve">
+	  <value>Live mode re-captures the screen at the rate below, so scrolling content behind stays faintly visible. Each capture takes about 20-30 ms — higher rate feels smoother and costs more CPU.</value>
+  </data>
+  <data name="BlurCoveredTip" xml:space="preserve">
+	  <value>The blur sits at the very bottom. An opaque "clock background" will cover it completely — set the background to "None" or lower its opacity to see the frost.</value>
+  </data>
+  <data name="LayerComposeTip" xml:space="preserve">
+	  <value>Bottom to top: blur, mask, clock. They combine freely — turn all off for a fully transparent lock screen.</value>
+  </data>
+  <data name="MaskEnabled" xml:space="preserve">
+	  <value>Full-screen mask</value>
+  </data>
+  <data name="ClockEnabled" xml:space="preserve">
+	  <value>Flip clock</value>
+  </data>
+  <data name="MaskFill" xml:space="preserve">
+	  <value>Mask fill</value>
+  </data>
+  <data name="MaskFillSolid" xml:space="preserve">
+	  <value>Solid color</value>
+  </data>
+  <data name="MaskFillGradient" xml:space="preserve">
+	  <value>Gradient</value>
+  </data>
+  <data name="BlurMaskTip" xml:space="preserve">
+	  <value>Keep the mask opacity below 30% — otherwise the mask covers the blur entirely and the frost won't show.</value>
+  </data>
+  <data name="ResetAppearance" xml:space="preserve">
+	  <value>Restore defaults</value>
+  </data>
+  <data name="ResetAppearanceRemark" xml:space="preserve">
+	  <value>Only resets blur, mask, clock and status indicator; password, hotkeys and auto-lock are untouched</value>
+  </data>
+  <data name="ResetAppearanceDone" xml:space="preserve">
+	  <value>Appearance restored to defaults</value>
+  </data>
 </root>

@@ -6,31 +6,32 @@
              Focusable="False">
 
     <Grid>
-        <!-- 黑色遮罩层：铺满整屏，透明度可调 -->
-        <Border x:Name="MaskLayer"
-                Background="#000000"
-                Opacity="0"
-                Visibility="Collapsed"
-                IsHitTestVisible="False" />
+        <!--
+            模糊层：屏幕取景的模糊图，铺满整屏。整个画面的最底层。
+        -->
+        <Image x:Name="BlurLayer"
+               Stretch="Fill"
+               Visibility="Collapsed"
+               IsHitTestVisible="False" />
 
         <!--
-            时钟层：全屏背景 + 翻页时钟整体算一层。
-            「时钟不透明度」作用在这一层上，所以调低时连背景一起透出桌面，
-            而不是只让数字变淡、背景照样遮死屏幕。
+            全屏遮罩：铺满整屏的一层颜色，可以是任意纯色或渐变。
+            纯色时直接用 Background，渐变时 Background 铺底色、MeshCanvas 叠柔和色块。
+        -->
+        <Grid x:Name="MaskLayer"
+              Visibility="Collapsed"
+              ClipToBounds="True"
+              IsHitTestVisible="False">
+            <Canvas x:Name="MeshCanvas" />
+        </Grid>
+
+        <!--
+            时钟层：只剩翻页时钟本身，不带任何背景。
+            解锁时密码框出现，这一层会整体压暗。
         -->
         <Grid x:Name="ClockLayer"
               Visibility="Collapsed"
               IsHitTestVisible="False">
-
-            <!-- 时钟模式的全屏背景：底色 + 多个柔和径向色块叠加，类似网格渐变 -->
-            <Grid x:Name="ClockBackground"
-                  Visibility="Collapsed"
-                  ClipToBounds="True"
-                  IsHitTestVisible="False">
-                <Canvas x:Name="MeshCanvas" />
-            </Grid>
-
-            <!-- 翻页时钟 -->
             <Viewbox x:Name="ClockHost"
                      HorizontalAlignment="Center"
                      VerticalAlignment="Center"

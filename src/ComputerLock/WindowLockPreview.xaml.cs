@@ -55,6 +55,9 @@ public partial class WindowLockPreview : Window
             var style = GetWindowLong(handle, GwlExStyle);
             SetWindowLong(handle, GwlExStyle,
                 style | WsExTransparent | WsExLayered | WsExNoActivate | WsExToolWindow);
+
+            // 预览窗也别进自己的取景框
+            Platforms.DesktopSnapshot.ExcludeFromCapture(handle);
         }
         catch
         {
