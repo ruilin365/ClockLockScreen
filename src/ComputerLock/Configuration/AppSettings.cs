@@ -253,6 +253,12 @@ public class AppSettings
     public double MaskSpeed { get; set; } = 175;
 
     /// <summary>
+    /// 是否已经提示过「设置锁屏快捷键」。
+    /// 只在第一次缺快捷键时弹一次，之后只在界面上留提示条。
+    /// </summary>
+    public bool HotkeyGuideShown { get; set; }
+
+    /// <summary>
     /// 是否已经把「时钟背景」迁移成「遮罩颜色」。
     /// 老配置里没有这个字段，读出来是 false，正好用来做一次性迁移。
     /// </summary>

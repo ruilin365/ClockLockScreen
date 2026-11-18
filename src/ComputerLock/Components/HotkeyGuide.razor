@@ -1,0 +1,95 @@
+﻿@inject IStringLocalizer<Lang> Lang
+@inject AppSettings AppSettings
+@inject AppSettingsProvider AppSettingsProvider
+@inject HotkeyHook HotkeyHook
+@inject ISnackbar Snackbar
+@inject ILogger Logger
+
+<MudDialog>
+    <TitleContent>
+        <div class="d-flex align-center" style="gap:10px;">
+            <MudIcon Icon="@Icons.Material.Filled.Keyboard" Color="Color.Primary" />
+            <MudText Typo="Typo.h6">@(Lang["HotkeyGuideTitle"])</MudText>
+        </div>
+    </TitleContent>
+
+    <DialogContent>
+        <MudText Typo="Typo.body2" Class="mb-4">@(Lang["HotkeyGuideBody"])</MudText>
+
+        <HotkeyInput Title="@(Lang["LockHotkey"])"
+                     Hotkey="@AppSettings.LockHotkeyString"
+                     OnHotkeySet="SetHotkey"
+                     OnHotkeyClear="ClearHotkey" />
+
+        <MudText Typo="Typo.caption" Class="input-tip mt-3">@(Lang["HotkeyGuideTip"])</MudText>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Default" OnClick="Close">@(Lang["HotkeyGuideLater"])</MudButton>
+        <MudButton Color="Color.Primary"
+                   Variant="Variant.Filled"
+                   Disabled="@(string.IsNullOrWhiteSpace(AppSettings.LockHotkeyString))"
+                   OnClick="Close">
+            @(Lang["HotkeyGuideDone"])
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance MudDialog { get; set; } = null!;
+
+    /// <summary>
+    /// 录到新快捷键就立刻落盘并注册，关掉对话框前就已经生效
+    /// </summary>
+    private Task SetHotkey(string hotkey)
+    {
+        // 和解锁键重复的话，锁和解锁会互相打架
+        if (hotkey.IsNotEmpty() && hotkey == AppSettings.UnlockHotkeyString)
+        {
+            Snackbar.Add(Lang["HotkeyDuplicateError"], Severity.Error);
+            return Task.CompletedTask;
+        }
+
+        AppSettings.LockHotkeyString = hotkey;
+        Save();
+
+        try
+        {
+            if (AppSettings.LockHotkey != null)
+            {
+                HotkeyHook.Register((int)HotkeyType.Lock, AppSettings.LockHotkey);
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.Error("引导页注册锁屏热键失败", ex);
+            Snackbar.Add($"{Lang["ExRegistFailed"]}{ex.Message}", Severity.Error);
+            return Task.CompletedTask;
+        }
+
+        Snackbar.Add(Lang["HotkeyGuideSaved"], Severity.Success);
+        return Task.CompletedTask;
+    }
+
+    private Task ClearHotkey()
+    {
+        AppSettings.LockHotkeyString = "";
+        Save();
+        HotkeyHook.Unregister((int)HotkeyType.Lock);
+        return Task.CompletedTask;
+    }
+
+    private void Save()
+    {
+        AppSettingsProvider.SaveSettings(AppSettings);
+    }
+
+    private void Close()
+    {
+        // 无论是否设置成功都不再自动弹，之后靠界面上的提示条提醒
+        AppSettings.HotkeyGuideShown = true;
+        Save();
+        MudDialog.Close();
+    }
+}

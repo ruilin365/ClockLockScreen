@@ -39,6 +39,23 @@
     <MudMainContent Style="height: 100vh;">
         <MudPaper Class="py-4 px-3 overflow-auto"
                   Style="height: 100%; background: transparent; border: none; box-shadow: none;">
+            @if (string.IsNullOrWhiteSpace(AppSettings.LockHotkeyString))
+            {
+                <MudAlert Severity="Severity.Warning" Dense="true" Class="mb-3">
+                    <ChildContent>
+                        <div class="d-flex align-center flex-wrap" style="gap:12px;">
+                            <span>@(Lang["HotkeyMissingBanner"])</span>
+                            <MudButton Size="Size.Small"
+                                       Variant="Variant.Outlined"
+                                       Color="Color.Warning"
+                                       StartIcon="@Icons.Material.Filled.Keyboard"
+                                       OnClick="ShowHotkeyGuideAsync">
+                                @(Lang["SetNow"])
+                            </MudButton>
+                        </div>
+                    </ChildContent>
+                </MudAlert>
+            }
             @Body
         </MudPaper>
     </MudMainContent>

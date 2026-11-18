@@ -675,4 +675,28 @@
   <data name="ResetAppearanceDone" xml:space="preserve">
 	  <value>已恢复默认外观</value>
   </data>
+  <data name="HotkeyGuideTitle" xml:space="preserve">
+	  <value>先设一个锁屏快捷键</value>
+  </data>
+  <data name="HotkeyGuideBody" xml:space="preserve">
+	  <value>快捷键是这把锁最常用的开关：按一下锁住屏幕，回来再按一下解锁。没有它的话，就只能从托盘图标手动锁屏了。</value>
+  </data>
+  <data name="HotkeyGuideTip" xml:space="preserve">
+	  <value>建议用 Ctrl + Alt + 字母，不容易和别的软件冲突。设置完立即生效，之后可以在「锁定设置」里改。</value>
+  </data>
+  <data name="HotkeyGuideLater" xml:space="preserve">
+	  <value>稍后再说</value>
+  </data>
+  <data name="HotkeyGuideDone" xml:space="preserve">
+	  <value>可以了</value>
+  </data>
+  <data name="HotkeyGuideSaved" xml:space="preserve">
+	  <value>快捷键已生效</value>
+  </data>
+  <data name="HotkeyMissingBanner" xml:space="preserve">
+	  <value>还没有设置锁屏快捷键，现在只能从托盘图标手动锁屏。</value>
+  </data>
+  <data name="SetNow" xml:space="preserve">
+	  <value>现在设置</value>
+  </data>
 </root>

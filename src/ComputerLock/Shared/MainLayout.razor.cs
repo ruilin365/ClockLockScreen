@@ -30,6 +30,9 @@ public partial class MainLayout
     [Inject]
     private ThemeSwitchService ThemeSwitchService { get; set; } = null!;
 
+    [Inject]
+    private IDialogService DialogService { get; set; } = null!;
+
     private static bool _isInitialized = false;
     protected override async Task OnInitializedAsync()
     {
@@ -103,10 +106,41 @@ public partial class MainLayout
     {
         await base.OnAfterRenderAsync(firstRender);
 
-        if (firstRender && AppSettings.AppTheme == ThemeEnum.System && _mudThemeProvider != null)
+        if (!firstRender)
+        {
+            return;
+        }
+
+        if (AppSettings.AppTheme == ThemeEnum.System && _mudThemeProvider != null)
         {
             await SwitchThemeAsync(ThemeEnum.System);
         }
+
+        // 没有锁屏快捷键的话，除了托盘就没别的入口了，第一次启动引导一次
+        if (string.IsNullOrWhiteSpace(AppSettings.LockHotkeyString) && !AppSettings.HotkeyGuideShown)
+        {
+            // 等界面完全就绪，否则对话框可能挂在半渲染的容器上
+            await Task.Delay(400);
+            await ShowHotkeyGuideAsync();
+        }
+    }
+
+    /// <summary>
+    /// 弹出「设置锁屏快捷键」引导
+    /// </summary>
+    private async Task ShowHotkeyGuideAsync()
+    {
+        var options = new DialogOptions
+        {
+            CloseButton = false,
+            MaxWidth = MaxWidth.Small,
+            FullWidth = true,
+            CloseOnEscapeKey = true
+        };
+
+        var dialog = await DialogService.ShowAsync<HotkeyGuide>("", options);
+        await dialog.Result;
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task SwitchThemeAsync(ThemeEnum theme)

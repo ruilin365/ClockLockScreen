@@ -675,4 +675,28 @@
   <data name="ResetAppearanceDone" xml:space="preserve">
 	  <value>Appearance restored to defaults</value>
   </data>
+  <data name="HotkeyGuideTitle" xml:space="preserve">
+	  <value>Set a lock hotkey</value>
+  </data>
+  <data name="HotkeyGuideBody" xml:space="preserve">
+	  <value>The hotkey is the main switch for this lock: press it to cover the screen, press again to unlock. Without one, you can only lock from the tray icon.</value>
+  </data>
+  <data name="HotkeyGuideTip" xml:space="preserve">
+	  <value>Ctrl + Alt + a letter is a good choice — unlikely to clash with other apps. It takes effect immediately and can be changed later under Lock settings.</value>
+  </data>
+  <data name="HotkeyGuideLater" xml:space="preserve">
+	  <value>Later</value>
+  </data>
+  <data name="HotkeyGuideDone" xml:space="preserve">
+	  <value>Done</value>
+  </data>
+  <data name="HotkeyGuideSaved" xml:space="preserve">
+	  <value>Hotkey is now active</value>
+  </data>
+  <data name="HotkeyMissingBanner" xml:space="preserve">
+	  <value>No lock hotkey yet — you can only lock from the tray icon right now.</value>
+  </data>
+  <data name="SetNow" xml:space="preserve">
+	  <value>Set it up</value>
+  </data>
 </root>

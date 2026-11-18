@@ -86,7 +86,14 @@ public partial class WindowMain : Window, IDisposable
         ApplyWebViewTransparency();
         this.Title = Lang.Title;
         EnsureNormalSize();
-        this.WindowState = _appSettings.IsHideWindowWhenLaunch ? WindowState.Minimized : WindowState.Normal;
+        // 连锁屏快捷键都没有的时候不能藏到托盘 —— 那样用户既不知道有这程序，
+        // 也没有任何入口去锁屏。先露出来，引导他在界面上设一个。
+        var needHotkeyGuide = string.IsNullOrWhiteSpace(_appSettings.LockHotkeyString)
+                              && !_appSettings.HotkeyGuideShown;
+
+        this.WindowState = _appSettings.IsHideWindowWhenLaunch && !needHotkeyGuide
+            ? WindowState.Minimized
+            : WindowState.Normal;
     }
 
     /// <summary>
