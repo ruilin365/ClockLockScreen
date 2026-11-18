@@ -160,6 +160,16 @@
                   @bind-Value:after="SaveSettingsLive"
                   Min="-40" Max="40" Step="1" Suffix="%" />
 
+                <SettingSlider Label="@(Lang["ClockCardGap"])"
+                  @bind-Value="AppSettings.ClockCardGap"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="0" Max="80" Step="1" Suffix="px" />
+
+                <SettingSlider Label="@(Lang["ClockGroupGap"])"
+                  @bind-Value="AppSettings.ClockGroupGap"
+                  @bind-Value:after="SaveSettingsLive"
+                  Min="0" Max="160" Step="1" Suffix="px" />
+
                 <!-- 外观 -->
                 <MudText Typo="Typo.overline" Class="input-title mt-4">@(Lang["ClockGroupLook"])</MudText>
 

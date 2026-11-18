@@ -609,4 +609,13 @@
 <data name="GradientFlowCostWarning" xml:space="preserve">
 	  <value>背景流动是整套动画里最贵的一项（整屏持续重绘），不流畅时优先关掉它，或把「动画帧率」调低。</value>
   </data>
+<data name="ClockCardGap" xml:space="preserve">
+	  <value>数字间距</value>
+  </data>
+<data name="ClockGroupGap" xml:space="preserve">
+	  <value>时分秒间距</value>
+  </data>
+<data name="ClockGapRemark" xml:space="preserve">
+	  <value>数字间距是同一组里两位数之间的距离，时分秒间距是三组之间的距离</value>
+  </data>
 </root>

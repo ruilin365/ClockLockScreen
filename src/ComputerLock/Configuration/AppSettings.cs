@@ -254,6 +254,16 @@ public class AppSettings
     public bool ClockShowSeconds { get; set; }
 
     /// <summary>
+    /// 时分秒各自两位数字之间的间距（像素，0-80）
+    /// </summary>
+    public double ClockCardGap { get; set; } = 12;
+
+    /// <summary>
+    /// 时 / 分 / 秒 三组之间的间距（像素，0-160）
+    /// </summary>
+    public double ClockGroupGap { get; set; } = 28;
+
+    /// <summary>
     /// 时钟背景方式
     /// </summary>
     public ClockBackgroundMode ClockBackgroundMode { get; set; } = ClockBackgroundMode.Solid;

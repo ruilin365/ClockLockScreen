@@ -82,6 +82,8 @@ public partial class LockSurface : UserControl
                 var backgroundOpacity = Math.Clamp(settings.ClockBackgroundOpacity, 0, 100) / 100d;
                 logger?.Info($"锁屏画面 -> 翻页时钟，时钟不透明度：{clockOpacity:P0}，背景不透明度：{backgroundOpacity:P0}，背景：{settings.ClockBackgroundMode}，预设：{settings.ClockBackgroundPreset}");
                 LockClock.SetShowSeconds(settings.ClockShowSeconds);
+                // 间距要在 SetShowSeconds 之后设，两者都会重算控件宽度
+                LockClock.ApplyGaps(settings.ClockCardGap, settings.ClockGroupGap);
                 _clockScale = settings.ClockScale;
                 _clockOffsetY = settings.ClockOffsetY;
 

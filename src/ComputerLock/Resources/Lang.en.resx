@@ -609,4 +609,13 @@
 <data name="GradientFlowCostWarning" xml:space="preserve">
 	  <value>Drifting the background is the most expensive effect here (continuous full-screen repaint). Turn it off first if things feel sluggish, or lower the frame rate.</value>
   </data>
+<data name="ClockCardGap" xml:space="preserve">
+	  <value>Digit gap</value>
+  </data>
+<data name="ClockGroupGap" xml:space="preserve">
+	  <value>Group gap</value>
+  </data>
+<data name="ClockGapRemark" xml:space="preserve">
+	  <value>Digit gap is between the two digits of one group; group gap is between hours, minutes and seconds</value>
+  </data>
 </root>

@@ -32,6 +32,10 @@
 <td><img src="previews/08-flip-rising.png" width="100%"><br><sub><b>翻页中 · 下半翻起</b>　新旧数字不叠影</sub></td>
 </tr>
 <tr>
+<td><img src="previews/13-gap-tight.png" width="100%"><br><sub><b>间距紧凑</b>　数字间距 0 / 组间距 4</sub></td>
+<td><img src="previews/14-gap-wide.png" width="100%"><br><sub><b>间距宽松</b>　数字间距 40 / 组间距 110</sub></td>
+</tr>
+<tr>
 <td><img src="previews/09-font-bebas.png" width="100%"><br><sub><b>字体 · Bebas Neue</b>（默认）</sub></td>
 <td><img src="previews/10-font-orbitron.png" width="100%"><br><sub><b>字体 · Orbitron</b>　字号按字形自动适配</sub></td>
 </tr>
@@ -58,7 +62,7 @@
   - 翻页时钟：纯色或网格渐变背景 + 翻页数字，可调不透明度与大小
 - **翻页时钟**：四层裁剪式翻页结构，上半翻落、下半翻起，压扁过程不叠影；可显示秒；时分秒分组间距
 - **字体**：内置 7 款 SIL OFL 开源字体（Bebas Neue / Barlow Condensed / Oswald / Archivo Narrow / Anton / Orbitron / Share Tech Mono），支持导入自己的 `.ttf` / `.otf`，字号按字形自动适配
-- **可调项**：背景不透明度、时钟不透明度、时钟大小、垂直位置、翻页速度、动画帧率（10–240fps，默认 60）、牌面圆角、牌面浓度、边框、中缝线、显示秒，全部是滑块或开关；拖动实时生效，数值可直接点开手输（支持两位小数）
+- **可调项**：背景不透明度、时钟不透明度、时钟大小、垂直位置、数字间距、时分秒间距、翻页速度、动画帧率（10–240fps，默认 60）、牌面圆角、牌面浓度、边框、中缝线、显示秒，全部是滑块或开关；拖动实时生效，数值可直接点开手输（支持两位小数）
 - **配色**：默认纯黑单色背景（最省资源）；另有 8 套网格渐变背景、12 套光条配色，参考 [WLED](https://github.com/wled/WLED) 的预设方案，支持动态流动。渐变会明显更吃 CPU / 内存，设置页里已标注
 - **设置界面**：Win11 毛玻璃 + Win11 风格开关，改一项即时生效
 - **预览模式**：不锁屏，把效果叠在桌面最上层（鼠标点击穿透），边调边看

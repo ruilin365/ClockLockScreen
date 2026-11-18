@@ -32,6 +32,10 @@ A small Windows lock-screen utility. It only covers the screen: it never touches
 <td><img src="previews/08-flip-rising.png" width="100%"><br><sub><b>Mid-flip · rising</b> — old and new digits never overlap</sub></td>
 </tr>
 <tr>
+<td><img src="previews/13-gap-tight.png" width="100%"><br><sub><b>Tight spacing</b> — digit gap 0 / group gap 4</sub></td>
+<td><img src="previews/14-gap-wide.png" width="100%"><br><sub><b>Wide spacing</b> — digit gap 40 / group gap 110</sub></td>
+</tr>
+<tr>
 <td><img src="previews/09-font-bebas.png" width="100%"><br><sub><b>Font · Bebas Neue</b> (default)</sub></td>
 <td><img src="previews/10-font-orbitron.png" width="100%"><br><sub><b>Font · Orbitron</b> — size auto-fits the glyph box</sub></td>
 </tr>
@@ -58,7 +62,7 @@ A small Windows lock-screen utility. It only covers the screen: it never touches
   - Flip clock: solid or mesh-gradient background with flip digits, opacity and size adjustable
 - **Flip clock**: four-layer clipped flip — top half falls, bottom half rises, no ghosting while squashing; optional seconds; extra gap between hh / mm / ss groups
 - **Fonts**: 7 bundled SIL OFL fonts (Bebas Neue / Barlow Condensed / Oswald / Archivo Narrow / Anton / Orbitron / Share Tech Mono), plus import your own `.ttf` / `.otf`; font size auto-fits the glyph box
-- **Everything adjustable**: background opacity, clock opacity, clock size, vertical position, flip speed, animation frame rate (10–240 fps, default 60), card corner radius, card fill, card border, seam line, show seconds — all sliders or switches; dragging applies live, and every number can be typed in directly (two decimals)
+- **Everything adjustable**: background opacity, clock opacity, clock size, vertical position, digit gap, group gap, flip speed, animation frame rate (10–240 fps, default 60), card corner radius, card fill, card border, seam line, show seconds — all sliders or switches; dragging applies live, and every number can be typed in directly (two decimals)
 - **Palettes**: solid black by default (lightest); 8 mesh-gradient backgrounds and 12 light-bar palettes inspired by [WLED](https://github.com/wled/WLED), with optional drift. Gradients cost noticeably more CPU / memory — the settings page says so up front
 - **Settings UI**: Windows 11 acrylic with Windows 11 style switches, changes apply instantly
 - **Preview mode**: no locking — renders the effect on top of the desktop with click-through, so you can tweak while watching

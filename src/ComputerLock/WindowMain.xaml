@@ -10,6 +10,8 @@
         Title="时钟锁屏"
         Height="600"
         Width="800"
+        MinWidth="640"
+        MinHeight="480"
         ResizeMode="NoResize"
         WindowState="Normal"
         StateChanged="Window_StateChanged"

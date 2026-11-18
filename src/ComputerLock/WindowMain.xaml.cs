@@ -85,7 +85,32 @@ public partial class WindowMain : Window, IDisposable
     {
         ApplyWebViewTransparency();
         this.Title = Lang.Title;
+        EnsureNormalSize();
         this.WindowState = _appSettings.IsHideWindowWhenLaunch ? WindowState.Minimized : WindowState.Normal;
+    }
+
+    /// <summary>
+    /// 正常显示时的窗口尺寸
+    /// </summary>
+    private const double NormalWidth = 800d;
+    private const double NormalHeight = 600d;
+
+    /// <summary>
+    /// 窗口被压缩成一条（标题栏文字会竖排、内容出现滚动条）时，撑回正常大小并居中。
+    /// 这种尺寸异常通常来自系统恢复窗口时只给了最小跟踪尺寸，XAML 里的 Width/Height 管不到。
+    /// </summary>
+    private void EnsureNormalSize()
+    {
+        if (Width >= NormalWidth - 1 && Height >= NormalHeight - 1)
+        {
+            return;
+        }
+
+        _logger.Info($"主窗口尺寸异常（{Width:0}x{Height:0}），恢复为 {NormalWidth:0}x{NormalHeight:0}");
+        Width = NormalWidth;
+        Height = NormalHeight;
+        Left = Math.Max(0, (SystemParameters.PrimaryScreenWidth - NormalWidth) / 2);
+        Top = Math.Max(0, (SystemParameters.PrimaryScreenHeight - NormalHeight) / 2);
     }
 
     /// <summary>
@@ -213,6 +238,7 @@ public partial class WindowMain : Window, IDisposable
 
     private void ShowMainWindow()
     {
+        EnsureNormalSize();
         this.ShowInTaskbar = true;
         this.WindowState = WindowState.Normal;
         this.Activate();
@@ -223,7 +249,12 @@ public partial class WindowMain : Window, IDisposable
         if (this.WindowState == WindowState.Minimized)
         {
             this.ShowInTaskbar = false;
+            return;
         }
+
+        // 从最小化恢复的路径不止托盘菜单一个（点任务栏、Alt+Tab 都算），统一在这里兜住尺寸
+        this.ShowInTaskbar = true;
+        EnsureNormalSize();
     }
 
     private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

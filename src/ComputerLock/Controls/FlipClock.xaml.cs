@@ -2,6 +2,7 @@
 using System.Windows.Threading;
 using UserControl = System.Windows.Controls.UserControl;
 using FontFamily = System.Windows.Media.FontFamily;
+using Thickness = System.Windows.Thickness;
 using Visibility = System.Windows.Visibility;
 
 namespace ComputerLock.Controls;
@@ -12,14 +13,19 @@ namespace ComputerLock.Controls;
 public partial class FlipClock : UserControl
 {
     /// <summary>
-    /// 四张牌的总宽度
+    /// 单张牌的宽度，跟 FlipCard.xaml 保持一致
     /// </summary>
-    private const double FourCardWidth = 852d;
+    private const double CardWidth = 200d;
 
     /// <summary>
-    /// 六张牌的总宽度
+    /// 牌与牌之间的间距（像素），可调
     /// </summary>
-    private const double SixCardWidth = 1292d;
+    private double _cardGap = 12d;
+
+    /// <summary>
+    /// 时 / 分 / 秒 三组之间的间距（像素），可调
+    /// </summary>
+    private double _groupGap = 28d;
 
     private readonly DispatcherTimer _timer = new();
     private string _lastTime = "";
@@ -66,8 +72,38 @@ public partial class FlipClock : UserControl
         CardSecondTens.Visibility = visibility;
         CardSecondOnes.Visibility = visibility;
 
-        Width = show ? SixCardWidth : FourCardWidth;
+        UpdateWidth();
         _lastTime = "";
+    }
+
+    /// <summary>
+    /// 设置数字间距与时分秒组间距（像素）
+    /// </summary>
+    public void ApplyGaps(double cardGap, double groupGap)
+    {
+        _cardGap = Math.Clamp(cardGap, 0, 80);
+        _groupGap = Math.Clamp(groupGap, 0, 160);
+
+        // 每张牌只负责自己左边的间距，第一张不带间距
+        CardHourTens.Margin = new Thickness(0);
+        CardHourOnes.Margin = new Thickness(_cardGap, 0, 0, 0);
+        CardMinuteTens.Margin = new Thickness(_groupGap, 0, 0, 0);
+        CardMinuteOnes.Margin = new Thickness(_cardGap, 0, 0, 0);
+        CardSecondTens.Margin = new Thickness(_groupGap, 0, 0, 0);
+        CardSecondOnes.Margin = new Thickness(_cardGap, 0, 0, 0);
+
+        UpdateWidth();
+    }
+
+    /// <summary>
+    /// 按当前显示位数和间距重算控件宽度。外层 Viewbox 依赖这个宽度算缩放，所以间距一改必须跟着变。
+    /// </summary>
+    private void UpdateWidth()
+    {
+        // 4 张：牌间 2 处 + 组间 1 处；6 张：牌间 3 处 + 组间 2 处
+        Width = ShowSeconds
+            ? 6 * CardWidth + 3 * _cardGap + 2 * _groupGap
+            : 4 * CardWidth + 2 * _cardGap + 1 * _groupGap;
     }
 
     /// <summary>
