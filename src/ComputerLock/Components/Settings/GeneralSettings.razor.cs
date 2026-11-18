@@ -196,6 +196,11 @@ public partial class GeneralSettings
         }
 
         AppSettingsProvider.RemoveSettings();
+
+        // 开机自启存在「计划任务」里，不在配置文件里，重置设置时要一并关掉，
+        // 否则重置完下一次开机又自己起来了
+        AutostartHook.DisabledAutostart();
+
         Restart();
     }
 }

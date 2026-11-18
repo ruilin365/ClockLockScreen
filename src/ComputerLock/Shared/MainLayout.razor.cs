@@ -95,16 +95,51 @@ public partial class MainLayout
         InitializeEventBinding();
     }
 
+    /// <summary>
+    /// 首次渲染后 MudThemeProvider 才被 @ref 绑定，主题设成「跟随系统」时要在这里重新取一次，
+    /// 否则拿不到真实的系统主题
+    /// </summary>
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+
+        if (firstRender && AppSettings.AppTheme == ThemeEnum.System && _mudThemeProvider != null)
+        {
+            await SwitchThemeAsync(ThemeEnum.System);
+        }
+    }
+
     private async Task SwitchThemeAsync(ThemeEnum theme)
     {
         _isDarkMode = theme switch
         {
-            ThemeEnum.System => await _mudThemeProvider.GetSystemDarkModeAsync(),
+            // OnInitializedAsync 阶段 @ref 还没绑定，_mudThemeProvider 是 null，
+            // 直接 await 会 NRE 导致启动闪退（默认设置就是「跟随系统」）。这时先读注册表。
+            ThemeEnum.System => _mudThemeProvider != null
+                ? await _mudThemeProvider.GetSystemDarkModeAsync()
+                : IsSystemDarkMode(),
             ThemeEnum.Light => false,
             ThemeEnum.Dark => true,
             _ => _isDarkMode
         };
         await InvokeAsync(StateHasChanged);
+    }
+
+    /// <summary>
+    /// 读注册表判断系统是否为深色模式（不依赖 MudThemeProvider）
+    /// </summary>
+    private static bool IsSystemDarkMode()
+    {
+        try
+        {
+            using var key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(
+                @"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize");
+            return key?.GetValue("AppsUseLightTheme") is int value && value == 0;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     private void InitializeEventBinding()

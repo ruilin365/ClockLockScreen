@@ -17,6 +17,39 @@ public partial class App : Application
     private static Mutex _mutex = default!;
     private WindowMain? _mainWindow;
     private ILogger _logger;
+
+    public App()
+    {
+        // 闪退时如果连日志都没留下，就完全没法查。
+        // 这三个钩子挂在 DI 之前，任何未捕获异常都会落到 crash.log。
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+            WriteCrash(e.ExceptionObject as Exception, "AppDomain");
+        DispatcherUnhandledException += (_, e) =>
+            WriteCrash(e.Exception, "Dispatcher");
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+            WriteCrash(e.Exception, "TaskScheduler");
+    }
+
+    /// <summary>
+    /// 把未捕获异常追加写到配置目录下的 crash.log
+    /// </summary>
+    private static void WriteCrash(Exception? exception, string source)
+    {
+        try
+        {
+            var directory = Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                AppBase.FriendlyName);
+            Directory.CreateDirectory(directory);
+
+            var text = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}] {source}{Environment.NewLine}{exception}{Environment.NewLine}{Environment.NewLine}";
+            File.AppendAllText(Path.Combine(directory, "crash.log"), text);
+        }
+        catch
+        {
+            // 记录失败就算了，不能在崩溃处理里再抛一次
+        }
+    }
     protected override void OnStartup(StartupEventArgs e)
     {
         base.OnStartup(e);
