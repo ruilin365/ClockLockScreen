@@ -30,6 +30,12 @@ internal class TaskManagerHook
 
     public void Unlock()
     {
+        // 锁定的时候没屏蔽（开关关着）就没有原始状态文件，不用恢复
+        if (!File.Exists(OriginalStateFilePath))
+        {
+            return;
+        }
+
         try
         {
             string content = File.ReadAllText(OriginalStateFilePath);

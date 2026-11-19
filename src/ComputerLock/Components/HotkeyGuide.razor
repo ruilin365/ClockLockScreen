@@ -22,6 +22,30 @@
                      OnHotkeyClear="ClearHotkey" />
 
         <MudText Typo="Typo.caption" Class="input-tip mt-3">@(Lang["HotkeyGuideTip"])</MudText>
+
+        <MudDivider Class="my-4" />
+
+        <MudText Typo="Typo.subtitle2" Class="mb-1">@(Lang["HotkeyGuideLayers"])</MudText>
+        <MudText Typo="Typo.caption" Class="input-tip mb-2">@(Lang["HotkeyGuideLayersTip"])</MudText>
+
+        <WinSwitch Value="@AppSettings.LockBlurEnabled"
+                   ValueChanged="@((bool v) => { AppSettings.LockBlurEnabled = v; Save(); })"
+                   Label="@(Lang["BlurEnabled"])" />
+
+        <WinSwitch Value="@AppSettings.LockMaskEnabled"
+                   ValueChanged="@((bool v) => { AppSettings.LockMaskEnabled = v; Save(); })"
+                   Label="@(Lang["MaskEnabled"])" />
+
+        <WinSwitch Value="@AppSettings.LockClockEnabled"
+                   ValueChanged="@((bool v) => { AppSettings.LockClockEnabled = v; Save(); })"
+                   Label="@(Lang["ClockEnabled"])" />
+
+        <div class="mt-1">
+            <WinSwitch Value="@AppSettings.LockDisableTaskManager"
+                       ValueChanged="@((bool v) => { AppSettings.LockDisableTaskManager = v; Save(); })"
+                       Label="@(Lang["DisableTaskManager"])" />
+            <MudText Typo="Typo.caption" Class="input-tip ml-7">@(Lang["DisableTaskManagerRemark"])</MudText>
+        </div>
     </DialogContent>
 
     <DialogActions>

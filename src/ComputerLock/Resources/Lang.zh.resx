@@ -699,4 +699,16 @@
   <data name="SetNow" xml:space="preserve">
 	  <value>现在设置</value>
   </data>
+  <data name="DisableTaskManager" xml:space="preserve">
+	  <value>锁定时屏蔽任务管理器</value>
+  </data>
+  <data name="DisableTaskManagerRemark" xml:space="preserve">
+	  <value>锁屏时禁掉任务管理器，避免别人从里面强杀程序。走的是一项 Windows 注册表策略，部分杀毒软件会把它当成恶意改动拦截；万一被拦，锁屏照样生效，只是任务管理器还能打开。</value>
+  </data>
+  <data name="HotkeyGuideLayers" xml:space="preserve">
+	  <value>锁屏时显示什么</value>
+  </data>
+  <data name="HotkeyGuideLayersTip" xml:space="preserve">
+	  <value>三层可以任意组合，全关就是完全透明。这些开关随时能在「锁屏设置」里改。</value>
+  </data>
 </root>

@@ -17,6 +17,8 @@
   - 弹一个「先设一个锁屏快捷键」的对话框，里面可以直接录制组合键，设置完立刻生效
   - 关掉对话框后，界面顶部会留一条提示，点「现在设置」随时能补
   - 提示只自动弹一次，之后不再打扰
+  - 引导里同时带上了「锁屏时显示什么」四个开关（屏幕模糊 / 全屏遮罩 / 翻页时钟 / 屏蔽任务管理器），默认全开，第一次用就能看清这软件会怎么盖住屏幕
+- **新增：锁定时屏蔽任务管理器** —— 以前是写死的，锁屏一定禁任务管理器，现在变成开关。走的是一项 Windows 注册表策略（`DisableTaskMgr`），部分杀毒软件会把它当成恶意改动拦截；设置页和引导页都标注了这一点。万一被拦，锁屏照样生效，只是任务管理器还能打开
 
 ## 修复
 
@@ -51,6 +53,8 @@
   - A "Set a lock hotkey" dialog opens where you can record the combination; it takes effect immediately
   - A banner stays at the top afterwards, with a "Set it up" button whenever you want
   - The dialog only auto-opens once
+  - The dialog also carries the four "what the lock screen shows" switches (blur / mask / flip clock / block Task Manager), all on by default, so a first-time user sees immediately what will cover the screen
+- **New: blocking Task Manager is now a switch** — previously hard-coded, so locking always killed Task Manager. It flips a Windows registry policy (`DisableTaskMgr`), which some antivirus products flag as malicious; both the settings page and the guide say so. If it gets blocked, locking still works — Task Manager just stays available
 
 ## Fixes
 

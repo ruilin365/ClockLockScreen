@@ -699,4 +699,16 @@
   <data name="SetNow" xml:space="preserve">
 	  <value>Set it up</value>
   </data>
+  <data name="DisableTaskManager" xml:space="preserve">
+	  <value>Block Task Manager while locked</value>
+  </data>
+  <data name="DisableTaskManagerRemark" xml:space="preserve">
+	  <value>Disables Task Manager during lock so nobody can kill the app from there. This flips a Windows registry policy and some antivirus products flag such changes as malicious; if it gets blocked, locking still works — Task Manager just stays available.</value>
+  </data>
+  <data name="HotkeyGuideLayers" xml:space="preserve">
+	  <value>What the lock screen shows</value>
+  </data>
+  <data name="HotkeyGuideLayersTip" xml:space="preserve">
+	  <value>The three layers combine freely — turn them all off for a fully transparent screen. Everything here can be changed later under Lock settings.</value>
+  </data>
 </root>

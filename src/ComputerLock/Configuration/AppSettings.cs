@@ -253,6 +253,12 @@ public class AppSettings
     public double MaskSpeed { get; set; } = 175;
 
     /// <summary>
+    /// 锁定时屏蔽任务管理器。
+    /// 走的是注册表策略 DisableTaskMgr，部分杀软会当恶意行为拦截。
+    /// </summary>
+    public bool LockDisableTaskManager { get; set; } = true;
+
+    /// <summary>
     /// 是否已经提示过「设置锁屏快捷键」。
     /// 只在第一次缺快捷键时弹一次，之后只在界面上留提示条。
     /// </summary>

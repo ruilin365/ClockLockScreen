@@ -199,8 +199,11 @@ internal class GlobalLockService : IGlobalLockService
         _logger.Info("全局锁定 -> 暂停空闲检测");
         _activityMonitor.StopMonitoring();
 
-        _logger.Info("全局锁定 -> 禁用任务管理器和系统键");
-        _taskManagerHook.Lock();
+        if (_appSettings.LockDisableTaskManager)
+        {
+            _logger.Info("全局锁定 -> 屏蔽任务管理器");
+            _taskManagerHook.Lock();
+        }
 
         if (_appSettings.IsHideMouseCursor)
         {
