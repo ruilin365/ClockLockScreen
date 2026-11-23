@@ -172,6 +172,14 @@
                               @bind-Value:after="SaveSettingsLive"
                               Min="1" Max="10" Step="1" Suffix="fps" />
                         </div>
+
+                        <div class="mt-1">
+                            <SettingSlider Label="@(Lang["BlurLiveScale"])"
+                              @bind-Value="AppSettings.LockBlurLiveScale"
+                              @bind-Value:after="SaveSettingsLive"
+                              Min="10" Max="100" Step="1" Suffix="%" />
+                            <MudText Typo="Typo.caption" Class="input-tip">@(Lang["BlurLiveScaleRemark"])</MudText>
+                        </div>
                     }
                 </div>
             }

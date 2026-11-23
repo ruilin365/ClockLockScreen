@@ -17,8 +17,9 @@ namespace ComputerLock.Platforms;
 /// <item>定格：锁屏那一刻截一张，整场锁屏都用它，半径可调、画面不动。</item>
 /// <item>实时：按固定频率重截，背后有东西在动（比如 AI 在滚日志）能隐约看出来。</item>
 /// </list>
-/// 取景都走「全屏缩到 1/4 的小图」，先把数据和内存降下来，模糊本身在小图上做，
+/// 取景都先把整屏缩成小图，再把内存和模糊开销降下来，模糊本身在小图上做，
 /// 最后由 Image 放大显示，放大时的插值又算一层柔化。
+/// 定格固定缩到 1/4；实时可以按设置调整取景分辨率（10%–100%）。
 /// </summary>
 internal static class DesktopSnapshot
 {
@@ -47,6 +48,16 @@ internal static class DesktopSnapshot
     /// 实时取景的帧率上限。取一次屏要 20~30ms，再高就纯粹在烧 CPU 了
     /// </summary>
     private const int MaxLiveFps = 10;
+
+    /// <summary>
+    /// 实时取景分辨率的下限（相对原分辨率的比例）。再小就只剩色块了
+    /// </summary>
+    private const double MinLiveScale = 0.10;
+
+    /// <summary>
+    /// 实时取景分辨率的上限：原分辨率。再往上没有意义（屏幕就这么大）
+    /// </summary>
+    private const double MaxLiveScale = 1.0;
 
     #region 定格
 
@@ -177,7 +188,9 @@ internal static class DesktopSnapshot
     private static BitmapSource? _liveFrame;
     private static SdRect _liveBounds;
     private static double _liveStrength = 45;
+    private static double _liveScale = 0.25;
     private static int _liveBusy;
+    private static long _lastFrameTicks;
     private static DibSurface? _liveSurface;
 
     /// <summary>
@@ -191,6 +204,12 @@ internal static class DesktopSnapshot
     public static bool IsLiveRunning => _liveTimer != null;
 
     /// <summary>
+    /// 上一帧「取屏 + 模糊」花了多少毫秒。设置页不需要，但排查 CPU 时很有用
+    /// </summary>
+    public static double LastFrameMilliseconds
+        => Volatile.Read(ref _lastFrameTicks) * 1000d / System.Diagnostics.Stopwatch.Frequency;
+
+    /// <summary>
     /// 正在用实时取景的窗口数。多屏时每块屏一个窗口，只有全部退出才真正停掉取景
     /// </summary>
     private static int _liveRefCount;
@@ -198,9 +217,10 @@ internal static class DesktopSnapshot
     /// <summary>
     /// 启动（或改频率）实时取景。每调用一次要与 StopLive 配对一次。
     /// </summary>
-    public static void StartLive(double strength, int fps)
+    public static void StartLive(double strength, int fps, double scalePercent = 25)
     {
         _liveStrength = Math.Clamp(strength, 0, 100);
+        _liveScale = Math.Clamp(scalePercent / 100d, MinLiveScale, MaxLiveScale);
 
         var interval = (int)Math.Round(1000d / Math.Clamp(fps, MinLiveFps, MaxLiveFps));
         interval = Math.Clamp(interval, 60, 1000);
@@ -244,7 +264,7 @@ internal static class DesktopSnapshot
     public static BitmapSource? LiveRegion(SdRect screenBounds)
     {
         var frame = _liveFrame;
-        return frame == null ? null : CropRegion(frame, _liveBounds, screenBounds, DownsampleFactor);
+        return frame == null ? null : CropRegion(frame, _liveBounds, screenBounds);
     }
 
     private static void LiveTick(object? state)
@@ -263,8 +283,9 @@ internal static class DesktopSnapshot
                 return;
             }
 
-            var width = Math.Max(1, bounds.Width / DownsampleFactor);
-            var height = Math.Max(1, bounds.Height / DownsampleFactor);
+            // 取景分辨率可调：比例越高越清晰，代价是每帧的模糊像素数按面积增长
+            var width = Math.Max(1, (int)Math.Round(bounds.Width * _liveScale));
+            var height = Math.Max(1, (int)Math.Round(bounds.Height * _liveScale));
 
             // 分辨率变了（换显示器、改缩放）就重建取景面
             if (_liveSurface == null || _liveSurface.Width != width || _liveSurface.Height != height)
@@ -273,15 +294,19 @@ internal static class DesktopSnapshot
                 _liveSurface = new DibSurface(width, height);
             }
 
+            var clock = System.Diagnostics.Stopwatch.StartNew();
             _liveSurface.Capture(bounds);
             var pixels = _liveSurface.ToPixels();
 
-            var radius = (int)Math.Round(_liveStrength / 100d * MaxRadius);
+            // 半径要跟着取景比例放大，否则调高分辨率后同样强度会显得越来越不糊
+            var radius = ScaledRadius(_liveStrength, _liveScale);
             BlurPixels(pixels, width, height, radius);
 
             var frame = BitmapSource.Create(width, height, 96, 96, PixelFormats.Bgra32, null,
                 pixels, width * 4);
             frame.Freeze();
+
+            Volatile.Write(ref _lastFrameTicks, clock.ElapsedTicks);
 
             _liveBounds = bounds;
             _liveFrame = frame;
@@ -319,7 +344,7 @@ internal static class DesktopSnapshot
         var buffer = new byte[stride * height];
         converted.CopyPixels(buffer, stride, 0);
 
-        var radius = (int)Math.Round(Math.Clamp(percent, 0, 100) / 100d * MaxRadius);
+        var radius = ScaledRadius(percent, 1d / DownsampleFactor);
         BlurPixels(buffer, width, height, radius);
 
         var result = BitmapSource.Create(width, height, 96, 96, PixelFormats.Bgra32, null, buffer, stride);
@@ -328,15 +353,18 @@ internal static class DesktopSnapshot
     }
 
     /// <summary>
-    /// 从整屏小图里裁出某块屏幕对应的部分
+    /// 从整屏小图里裁出某块屏幕对应的部分。
+    /// 按「小图 / 原图」的实际比例换算，取景分辨率改了也不需要跟着改这里。
     /// </summary>
-    private static BitmapSource? CropRegion(BitmapSource frame, SdRect frameBounds, SdRect screenBounds,
-        int downsample = DownsampleFactor)
+    private static BitmapSource? CropRegion(BitmapSource frame, SdRect frameBounds, SdRect screenBounds)
     {
-        var x = (screenBounds.X - frameBounds.X) / downsample;
-        var y = (screenBounds.Y - frameBounds.Y) / downsample;
-        var width = screenBounds.Width / downsample;
-        var height = screenBounds.Height / downsample;
+        var scaleX = (double)frame.PixelWidth / frameBounds.Width;
+        var scaleY = (double)frame.PixelHeight / frameBounds.Height;
+
+        var x = (int)Math.Floor((screenBounds.X - frameBounds.X) * scaleX);
+        var y = (int)Math.Floor((screenBounds.Y - frameBounds.Y) * scaleY);
+        var width = (int)Math.Ceiling(screenBounds.Width * scaleX);
+        var height = (int)Math.Ceiling(screenBounds.Height * scaleY);
 
         x = Math.Clamp(x, 0, Math.Max(0, frame.PixelWidth - 1));
         y = Math.Clamp(y, 0, Math.Max(0, frame.PixelHeight - 1));
@@ -353,6 +381,18 @@ internal static class DesktopSnapshot
         {
             return null;
         }
+    }
+
+    /// <summary>
+    /// 把「强度百分比」换算成当前取景比例下的像素半径。
+    /// 参照系是 1/4 取景（历史上定下的观感基准），取景越清晰半径越大，
+    /// 这样同一个强度在 25% 和 100% 下看起来一样糊。
+    /// </summary>
+    private static int ScaledRadius(double percent, double scale)
+    {
+        var baseRadius = Math.Clamp(percent, 0, 100) / 100d * MaxRadius;
+        var scaled = baseRadius * (scale / (1d / DownsampleFactor));
+        return (int)Math.Round(Math.Clamp(scaled, 0, 96));
     }
 
     /// <summary>

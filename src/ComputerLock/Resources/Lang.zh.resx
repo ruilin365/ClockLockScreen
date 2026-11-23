@@ -711,4 +711,10 @@
   <data name="HotkeyGuideLayersTip" xml:space="preserve">
 	  <value>三层可以任意组合，全关就是完全透明。这些开关随时能在「锁屏设置」里改。</value>
   </data>
+  <data name="BlurLiveScale" xml:space="preserve">
+	  <value>取景分辨率</value>
+  </data>
+  <data name="BlurLiveScaleRemark" xml:space="preserve">
+	  <value>相对屏幕原分辨率的百分比：100% 就是原分辨率（最清晰、最费 CPU），默认 25%。实测 1920×1080 下每帧从约 40ms 涨到约 160ms —— 大概是 4 倍，不会离谱，但一直开着实时会明显感觉得到。</value>
+  </data>
 </root>

@@ -202,6 +202,12 @@ public class AppSettings
     public double LockBlurRefreshRate { get; set; } = 3;
 
     /// <summary>
+    /// 实时取景的截取分辨率（相对屏幕原分辨率的百分比，10–100）。
+    /// 越高越清晰，但每帧要处理的像素数按面积增长，CPU 占用也跟着涨。
+    /// </summary>
+    public double LockBlurLiveScale { get; set; } = 25;
+
+    /// <summary>
     /// 全屏遮罩开关。遮罩就是铺满整屏的一层颜色，可以是任意纯色或渐变，
     /// 本质上就是一个「能指定颜色的全屏蒙版」
     /// </summary>
@@ -388,6 +394,7 @@ public class AppSettings
     private static readonly string[] AppearanceProperties =
     [
         nameof(LockBlurEnabled), nameof(LockBlurMode), nameof(LockBlurStrength), nameof(LockBlurRefreshRate),
+        nameof(LockBlurLiveScale),
         nameof(LockMaskEnabled), nameof(LockMaskOpacity), nameof(MaskFillMode), nameof(MaskColor1),
         nameof(MaskColor2), nameof(MaskAngle), nameof(MaskPreset), nameof(MaskAnimated), nameof(MaskSpeed),
         nameof(LockClockEnabled), nameof(ClockOpacity), nameof(ClockFontId), nameof(ClockOffsetY),

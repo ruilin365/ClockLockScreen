@@ -99,11 +99,12 @@ public partial class LockSurface : UserControl
 
         if (settings.LockBlurMode == LockBlurMode.Live)
         {
-            logger?.Info($"锁屏模糊 -> 实时取景，强度：{strength:0}，刷新：{settings.LockBlurRefreshRate:0}fps");
+            logger?.Info($"锁屏模糊 -> 实时取景，强度：{strength:0}，刷新：{settings.LockBlurRefreshRate:0}fps，取景分辨率：{settings.LockBlurLiveScale:0}%");
             DesktopSnapshot.LiveFrameReady -= OnLiveFrameReady;
             DesktopSnapshot.LiveFrameReady += OnLiveFrameReady;
             _liveStarted = true;
-            DesktopSnapshot.StartLive(strength, (int)Math.Round(settings.LockBlurRefreshRate));
+            DesktopSnapshot.StartLive(strength, (int)Math.Round(settings.LockBlurRefreshRate),
+                settings.LockBlurLiveScale);
             ShowLiveFrame(bounds);
             return;
         }
