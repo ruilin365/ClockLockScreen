@@ -1,10 +1,10 @@
-# 时钟锁屏 0.8.10
+# 时钟锁屏 0.8.11
 
 离开电脑一会儿，AI Agent 还在跑、下载还没完、脚本还没结束 —— 既不能让电脑休眠，又不想让别人动你的屏幕。
 
 ## 下载
 
-`ClockLockScreen_v0.8.10_win_x64.zip` —— 解压后直接运行 `ClockLockScreen.exe`。
+`ClockLockScreen_v0.8.11_win_x64.zip` —— 解压后直接运行 `ClockLockScreen.exe`。
 
 - 需要 [.NET 8 Desktop Runtime](https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe)
 - 需要 [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)（Win11 通常已内置）
@@ -14,6 +14,15 @@
 
 > 从 0.8.7 直接升级即可。曾短暂出现的 0.8.8 / 0.8.9 有启动闪退问题，已撤下，不用管。
 > 老配置会自动迁移：原来的「时钟背景」会变成「全屏遮罩」的配色，观感不变。
+
+---
+
+## 相对 0.8.10 的改动
+
+- **实时取景分辨率可调** —— 以前实时模糊固定按 1/4 分辨率取屏，现在「屏幕模糊 → 模糊方式：实时」下面多了一个滑块，10%–100% 可调，默认 50%
+  - 调高更清晰、更跟手，代价是每帧耗时会涨：1920×1080 下 50% 约 50ms/帧，100% 约 160ms/帧
+  - 不建议低于 40%：降采样时缩放会丢掉高频细节，窗口边缘会出现彩色镶边。默认值定在 50% 就是为了避开这一点
+- **README 增加真实桌面效果图** —— 不再只有纯色背景的示意图，能直接看到壁纸被模糊后的样子
 
 ---
 
@@ -28,7 +37,7 @@
 
 **为什么不直接用 Windows 自带的亚克力/云母材质**：DWM 那套材质必然带一层半透明着色 —— `GradientColor` 的 alpha 同时就是模糊浓度，压到 0 就直接不模糊了，强度也不可调，等于做不到「纯模糊」。
 
-这里走的是另一条路：把锁屏窗口标记成「不参与截屏」（`WDA_EXCLUDEFROMCAPTURE`），于是全屏截取拿到的就是窗口背后的真实画面，每帧缩到 1/4 再做盒式模糊。好处是没有底色、强度真可调；代价是每次取屏约 20–30ms，默认 2–3fps，整机 CPU 占用约 0.5%。
+这里走的是另一条路：把锁屏窗口标记成「不参与截屏」（`WDA_EXCLUDEFROMCAPTURE`），于是全屏截取拿到的就是窗口背后的真实画面，每帧降采样（比例可调）后再做盒式模糊。好处是没有底色、强度真可调；代价是每次取屏要 20–30ms 加模糊时间，默认 3fps，对整机 CPU 影响很小。
 
 ### 2. 锁屏画面从「三选一」改成三层叠加
 
@@ -81,13 +90,13 @@
 
 ---
 
-# Clock Lock Screen 0.8.10
+# Clock Lock Screen 0.8.11
 
 Your AI agent is still running, a download is halfway done, a script hasn't finished — you step away, but the PC must not sleep and nobody should touch your screen.
 
 ## Download
 
-`ClockLockScreen_v0.8.10_win_x64.zip` — unzip and run `ClockLockScreen.exe`.
+`ClockLockScreen_v0.8.11_win_x64.zip` — unzip and run `ClockLockScreen.exe`.
 
 - Requires [.NET 8 Desktop Runtime](https://aka.ms/dotnet/8.0/windowsdesktop-runtime-win-x64.exe)
 - Requires [WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/) (preinstalled on most Windows 11)
@@ -97,6 +106,15 @@ Your AI agent is still running, a download is halfway done, a script hasn't fini
 
 > Upgrading straight from 0.8.7 is fine. Versions 0.8.8 and 0.8.9 crashed on launch and have been withdrawn — ignore them.
 > Existing settings migrate automatically: the old "clock background" becomes the "full-screen mask" colour, so nothing looks different.
+
+---
+
+## Changes since 0.8.10
+
+- **Live capture resolution is adjustable** — live blur used to always capture at 1/4 resolution. There is now a slider under "Screen blur → mode: live", 10%–100%, 50% by default
+  - Higher means sharper and more responsive, at the cost of per-frame time: at 1920x1080 about 50 ms per frame at 50%, about 160 ms at 100%
+  - Going below ~40% is not advisable: downscaling drops high-frequency detail and coloured fringing appears along window edges — which is exactly why the default sits at 50%
+- **A real-desktop blur screenshot in the README** — no longer only flat-colour mockups; you can see what a blurred wallpaper actually looks like
 
 ---
 
@@ -111,7 +129,7 @@ The lock screen now shows a blurred image of the screen itself instead of a flat
 
 **Why not use DWM acrylic/mica**: the built-in material always carries a translucent tint — the alpha of `GradientColor` doubles as the blur strength, so setting it to zero simply disables the blur, and the strength is not adjustable. That rules out a pure, tunable blur.
 
-Instead the lock window is marked `WDA_EXCLUDEFROMCAPTURE`, so a full-screen grab returns what is actually *behind* it; each frame is downscaled to 1/4 and box-blurred. No tint, truly adjustable strength. The cost is roughly 20–30 ms per capture — 2–3 fps by default, about 0.5% CPU.
+Instead the lock window is marked `WDA_EXCLUDEFROMCAPTURE`, so a full-screen grab returns what is actually *behind* it; each frame is downscaled (ratio configurable) and box-blurred. No tint, truly adjustable strength. The cost is 20–30 ms per capture plus the blur — 3 fps by default, negligible on a multi-core machine.
 
 ### 2. From "pick one of three" to three stacked layers
 

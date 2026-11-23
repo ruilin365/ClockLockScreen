@@ -16,6 +16,9 @@ A small Windows lock-screen utility. It only covers the screen: it never touches
 
 <table>
 <tr>
+<td colspan="2"><img src="previews/15-blur-desktop.png" width="100%"><br><sub><b>Screen blur on a real desktop</b> — frozen at strength 8, plus a 35% black mask; the wallpaper's shapes survive, the detail doesn't</sub></td>
+</tr>
+<tr>
 <td width="50%"><img src="previews/02-default-seconds.png" width="100%"><br><sub><b>Show seconds</b> — six cards, grouped hh : mm : ss</sub></td>
 <td width="50%"><img src="previews/03-default-faint.png" width="100%"><br><sub><b>Clock opacity 35%</b> — only a shadow remains, screen content unreadable</sub></td>
 </tr>
@@ -57,7 +60,7 @@ A small Windows lock-screen utility. It only covers the screen: it never touches
 ## Features
 
 - **Three layers, combined freely** (bottom to top: blur → mask → clock)
-  - Screen blur (frosted glass): frozen or live, strength 0–100%. Frozen grabs one snapshot at lock time — best privacy, lowest CPU; live re-captures at 1–10 fps so movement behind stays visible
+  - Screen blur (frosted glass): frozen or live, strength 0–100%. Frozen grabs one snapshot at lock time — best privacy, lowest CPU; live re-captures at 1–10 fps so movement behind stays visible, with capture resolution adjustable from 10% to 100% (50% by default)
   - Full-screen mask: a single colour layer covering the screen, any solid colour or mesh gradient, opacity 0–100%
   - Flip clock: digits and cards only, no background
 - **Flip clock**: four-layer clipped flip — top half falls, bottom half rises, no ghosting while squashing; optional seconds; extra gap between hh / mm / ss groups

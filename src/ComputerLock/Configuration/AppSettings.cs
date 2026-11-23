@@ -204,8 +204,9 @@ public class AppSettings
     /// <summary>
     /// 实时取景的截取分辨率（相对屏幕原分辨率的百分比，10–100）。
     /// 越高越清晰，但每帧要处理的像素数按面积增长，CPU 占用也跟着涨。
+    /// 默认给 50：再往下省不了多少 CPU，边缘的彩色镶边却明显起来。
     /// </summary>
-    public double LockBlurLiveScale { get; set; } = 25;
+    public double LockBlurLiveScale { get; set; } = 50;
 
     /// <summary>
     /// 全屏遮罩开关。遮罩就是铺满整屏的一层颜色，可以是任意纯色或渐变，

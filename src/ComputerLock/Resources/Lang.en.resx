@@ -715,6 +715,6 @@
 	  <value>Capture resolution</value>
   </data>
   <data name="BlurLiveScaleRemark" xml:space="preserve">
-	  <value>Percentage of the screen's native resolution: 100% is native (sharpest, most CPU), 25% by default. Measured at 1920x1080: about 40 ms per frame at 25% vs about 160 ms at 100% — roughly 4x.</value>
+	  <value>Percentage of the screen's native resolution: 100% is native (sharpest, most CPU), 50% by default. Below ~40% coloured fringing shows up along edges, because scaling drops high-frequency detail. Measured at 1920x1080: about 50 ms per frame at 50%, about 160 ms at 100%.</value>
   </data>
 </root>
